@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVtoDatabase", "CSVtoDatabase.csproj", "{666116A6-62F3-4D90-A11B-45B5E70E188D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadConsole", "D:\VisualStudioProjects\ThreadConsole\ThreadConsole.csproj", "{4C98119B-E0ED-4529-B498-907A813BC39F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{666116A6-62F3-4D90-A11B-45B5E70E188D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{666116A6-62F3-4D90-A11B-45B5E70E188D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{666116A6-62F3-4D90-A11B-45B5E70E188D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{666116A6-62F3-4D90-A11B-45B5E70E188D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C98119B-E0ED-4529-B498-907A813BC39F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C98119B-E0ED-4529-B498-907A813BC39F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C98119B-E0ED-4529-B498-907A813BC39F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C98119B-E0ED-4529-B498-907A813BC39F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {752F904C-F632-4652-925B-A7DFFD3B9DCF}
+	EndGlobalSection
+EndGlobal
