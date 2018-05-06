@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using DbHelper;
+//using DbHelper;
 using MySql.Data.MySqlClient;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
@@ -216,12 +216,13 @@ namespace CSVtoDatabase
                 {
                     try
                     {
-                        table = DbHelper.Helper.QuerySqlServer(queryString);
+                        table = Helper.QuerySqlServer(queryString);
                         connected = true;
                     }
                     catch (Exception e)
                     {
-                        textBoxLog.AppendText($"{textBoxLog.Text}\r\n");
+                        textBoxLog.AppendText($"{e.Message}\r\n");
+                        return new List<string>();
                     }
                 }
 
@@ -229,7 +230,7 @@ namespace CSVtoDatabase
                 {
                     try
                     {
-                        table = DbHelper.Helper.QuerySqlServer(
+                        table = Helper.QuerySqlServer(
                             queryString,
                             $"Data Source=.;Initial Catalog=master;User ID={textBoxUId.Text};Password={textBoxPwd.Text}");
                         connected = true;
@@ -254,7 +255,7 @@ namespace CSVtoDatabase
                 try
                 {
                     //Get list of database
-                    table = DbHelper.Helper.QueryMySql("show databases;",
+                    table = Helper.QueryMySql("show databases;",
                         $"server=localhost;user id={textBoxUId.Text};persistsecurityinfo=True;database=mysql;password={textBoxPwd.Text}");
                     connected = true;
                 }
@@ -290,9 +291,9 @@ namespace CSVtoDatabase
                 {
 
                     table = (checkBoxIntegratedSecurity.Checked)
-                        ? DbHelper.Helper.QuerySqlServer(
+                        ? Helper.QuerySqlServer(
                             $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'")
-                        : DbHelper.Helper.QuerySqlServer(
+                        : Helper.QuerySqlServer(
                             $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'", connString);
                 }
                 catch (Exception e)
@@ -315,7 +316,7 @@ namespace CSVtoDatabase
                 try
                 {
 
-                    table = DbHelper.Helper.QueryMySql($@"use {comboBoxDbList.Text};show tables;", connString);
+                    table = Helper.QueryMySql($@"use {comboBoxDbList.Text};show tables;", connString);
                 }
                 catch (Exception e)
                 {

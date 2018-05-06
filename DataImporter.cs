@@ -367,7 +367,7 @@ namespace CSVtoDatabase
             //t.Text = @"1000000/1000000   Error occurs.";
         }
 
-        public static async void Pause()
+        public static void Pause()
         {
             bool formClosing = Program.getMainForm().formClosing;
             while (formClosing)
