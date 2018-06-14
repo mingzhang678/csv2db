@@ -19,17 +19,31 @@ namespace CSVtoDatabase
         private static String _connectionString;// = "Data Source=.;Initial Catalog=master;Integrated Security=True"; //ConfigurationManager.ConnectionStrings["DBmaster"].ConnectionString;
         public static SqlConnection sqlConnection = null;
         public static MySqlConnection mySqlConnection = null;
+
+        public Helper()
+        {
+            _connectionString = "Data Source=.;Initial Catalog=master;Integrated Security=True";
+        }
         public Helper(string connectionString)
         {
             _connectionString = connectionString;
         }
-        public static DataTable QuerySqlServer(string str)
+
+        public Helper(SqlConnection connection)
+        {
+            sqlConnection = connection;
+        }
+
+        public Helper(MySqlConnection connection)
+        {
+            mySqlConnection = connection;
+        }
+        public DataTable QuerySqlServer(string str)
         {
             sqlConnection = new SqlConnection(_connectionString);
             SqlCommand command = new SqlCommand(str, sqlConnection);
             try
             {
-
                 sqlConnection.Open();
             }
             catch (Exception e)
@@ -44,7 +58,7 @@ namespace CSVtoDatabase
             return table;
         }
 
-        public static DataTable QuerySqlServer(string queryString, string connectionString)
+        public  DataTable QuerySqlServer(string queryString, string connectionString)
         {
             sqlConnection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand(queryString, sqlConnection);
@@ -64,12 +78,12 @@ namespace CSVtoDatabase
             return table;
         }
 
-        public static DataTable QuerySqlServer(String queryString, SqlConnection connection)
+        public  DataTable QuerySqlServer(String queryString, SqlConnection connection)
         {
             return null;
         }
 
-        public static DataTable QueryMySql(String queryString, MySqlConnection connection)
+        public  DataTable QueryMySql(String queryString, MySqlConnection connection)
         {
             return null;
         }
@@ -79,7 +93,7 @@ namespace CSVtoDatabase
         /// <param name="queryString">query string</param>
         /// <param name="connectionString">connection string</param>
         /// <returns></returns>
-        public static DataTable QueryMySql(string queryString, string connectionString)
+        public DataTable QueryMySql(string queryString, string connectionString)
         {
             mySqlConnection = new MySqlConnection(connectionString);
             MySqlCommand command = new MySqlCommand(queryString, mySqlConnection);

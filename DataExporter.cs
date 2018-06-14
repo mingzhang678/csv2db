@@ -77,8 +77,10 @@ namespace CSVtoDatabase
         }
         public static int WriteToCsv(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
         {
-            thread = new Thread(() => WriteRecordsThread(table, fieldCount, recordCount, writer));
-            thread.IsBackground = false;
+            thread = new Thread(() => WriteRecordsThread(table, fieldCount, recordCount, writer))
+            {
+                IsBackground = false
+            };
             thread.Start();
             return 0;
         }
@@ -155,12 +157,12 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        table = Helper.QuerySqlServer(queryString, connectionString);
+                        table = new Helper().QuerySqlServer(queryString, connectionString);
                     }
                     break;
                 case DataSource.MySql:
                     {
-                        table = Helper.QueryMySql(queryString, connectionString);
+                        table = new Helper().QueryMySql(queryString, connectionString);
                     }
                     break;
             }

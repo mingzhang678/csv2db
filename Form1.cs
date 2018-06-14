@@ -28,6 +28,9 @@ namespace CSVtoDatabase
         //private OnClosingDialog onClosingDialog;
         private string safeFileName = string.Empty;
 
+        private SqlConnection SqlConnection => null;
+        private MySqlConnection MySqlConnection => null;
+
         public Form1()
         {
             InitializeComponent();
@@ -216,7 +219,7 @@ namespace CSVtoDatabase
                 {
                     try
                     {
-                        table = Helper.QuerySqlServer(queryString);
+                        table = new Helper().QuerySqlServer(queryString);
                         connected = true;
                     }
                     catch (Exception e)
@@ -230,7 +233,7 @@ namespace CSVtoDatabase
                 {
                     try
                     {
-                        table = Helper.QuerySqlServer(
+                        table = new Helper("").QuerySqlServer(
                             queryString,
                             $"Data Source=.;Initial Catalog=master;User ID={textBoxUId.Text};Password={textBoxPwd.Text}");
                         connected = true;
@@ -255,7 +258,7 @@ namespace CSVtoDatabase
                 try
                 {
                     //Get list of database
-                    table = Helper.QueryMySql("show databases;",
+                    table = new Helper().QueryMySql("show databases;",
                         $"server=localhost;user id={textBoxUId.Text};persistsecurityinfo=True;database=mysql;password={textBoxPwd.Text}");
                     connected = true;
                 }
@@ -291,9 +294,9 @@ namespace CSVtoDatabase
                 {
 
                     table = (checkBoxIntegratedSecurity.Checked)
-                        ? Helper.QuerySqlServer(
+                        ? new Helper(connString).QuerySqlServer(
                             $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'")
-                        : Helper.QuerySqlServer(
+                        : new Helper(connString).QuerySqlServer(
                             $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'", connString);
                 }
                 catch (Exception e)
@@ -316,7 +319,7 @@ namespace CSVtoDatabase
                 try
                 {
 
-                    table = Helper.QueryMySql($@"use {comboBoxDbList.Text};show tables;", connString);
+                    table = new Helper().QueryMySql($@"use {comboBoxDbList.Text};show tables;", connString);
                 }
                 catch (Exception e)
                 {
