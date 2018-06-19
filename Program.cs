@@ -20,7 +20,7 @@ namespace CSVtoDatabase
             form1 = new Form1();
             Application.Run(form1);
         }
-        public static Form1 getMainForm()
+        public static Form1 GetMainForm()
         {
             return form1;
         }

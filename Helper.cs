@@ -17,8 +17,8 @@ namespace CSVtoDatabase
     public class Helper
     {
         private static String _connectionString;// = "Data Source=.;Initial Catalog=master;Integrated Security=True"; //ConfigurationManager.ConnectionStrings["DBmaster"].ConnectionString;
-        public static SqlConnection sqlConnection = null;
-        public static MySqlConnection mySqlConnection = null;
+        public static SqlConnection SqlConnection { get; set; }
+        public static MySqlConnection MySqlConnection { get; set; }
 
         public Helper()
         {
@@ -31,25 +31,27 @@ namespace CSVtoDatabase
 
         public Helper(SqlConnection connection)
         {
-            sqlConnection = connection;
+            SqlConnection = connection;
         }
 
         public Helper(MySqlConnection connection)
         {
-            mySqlConnection = connection;
+            MySqlConnection = connection;
         }
         public DataTable QuerySqlServer(string str)
         {
-            sqlConnection = new SqlConnection(_connectionString);
-            SqlCommand command = new SqlCommand(str, sqlConnection);
-            try
-            {
-                sqlConnection.Open();
-            }
-            catch (Exception e)
-            {
-                Program.getMainForm().textBoxLog.Text = $@"Cannot connect to Server with connectionstring {_connectionString}";
-            }
+            //sqlConnection = new SqlConnection(_connectionString);
+            SqlCommand command = new SqlCommand(str, SqlConnection);
+            // try
+            //{
+            if (SqlConnection != null)
+                if (SqlConnection.State == ConnectionState.Closed)
+                    SqlConnection.Open();
+            //}
+            // catch (Exception e)
+            //{
+            //Program.getMainForm().textBoxLog.Text = $@"Cannot connect to Server with connectionstring {_connectionString}";
+            //}
             //SqlDataReader sqlDataReader = command.ExecuteReader();
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
             DataTable table = new DataTable();
@@ -58,19 +60,19 @@ namespace CSVtoDatabase
             return table;
         }
 
-        public  DataTable QuerySqlServer(string queryString, string connectionString)
+        public DataTable QuerySqlServer(string queryString, string connectionString)
         {
-            sqlConnection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand(queryString, sqlConnection);
-            try
-            {
-                sqlConnection.Open();
-            }
-            catch (Exception e)
-            {
-                Program.getMainForm().textBoxLog.Text =
-                    $@"Cannot connect to Server with connectionstring {connectionString}.\r\n";
-            }
+            SqlConnection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand(queryString, SqlConnection);
+            if (SqlConnection != null && SqlConnection.State == ConnectionState.Closed)
+                //try
+                //{
+                    SqlConnection.Open();
+                //}
+                //catch (Exception e)
+                //{
+                 //   Program.getMainForm().textBoxLog.Text = $@"Cannot connect to Server with connectionstring {connectionString}.\r\n";
+                //}
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
             DataTable table = new DataTable();
             sqlDataAdapter.Fill(table);
@@ -78,12 +80,12 @@ namespace CSVtoDatabase
             return table;
         }
 
-        public  DataTable QuerySqlServer(String queryString, SqlConnection connection)
+        public DataTable QuerySqlServer(String queryString, SqlConnection connection)
         {
             return null;
         }
 
-        public  DataTable QueryMySql(String queryString, MySqlConnection connection)
+        public DataTable QueryMySql(String queryString, MySqlConnection connection)
         {
             return null;
         }
@@ -95,30 +97,28 @@ namespace CSVtoDatabase
         /// <returns></returns>
         public DataTable QueryMySql(string queryString, string connectionString)
         {
-            mySqlConnection = new MySqlConnection(connectionString);
-            MySqlCommand command = new MySqlCommand(queryString, mySqlConnection);
-            try
-            {
+            MySqlConnection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand(queryString, MySqlConnection);
+            //try
+           // {
 
-                mySqlConnection.Open();
-            }
-            catch (Exception e)
-            {
-                Program.getMainForm().textBoxLog.Text =
-                    $@"Cannot connect to Server with connectionstring {connectionString}.\r\n";
-            }
+                MySqlConnection.Open();
+            //}
+            //catch (Exception e)
+            //{
+             //   Program.getMainForm().textBoxLog.Text =  $@"Cannot connect to Server with connectionstring {connectionString}.\r\n";
+            //}
             MySqlDataAdapter adapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             adapter.Fill(table);
             adapter.Dispose();
             return table;
         }
-        public static DataTable QueryMySql(string str)
+        public DataTable QueryMySql(string str)
         {
-            mySqlConnection = new MySqlConnection(_connectionString);
-            MySqlCommand command = new MySqlCommand(str, mySqlConnection);
-            mySqlConnection.Open();
-            //SqlDataReader sqlDataReader = command.ExecuteReader();
+            MySqlConnection = new MySqlConnection(_connectionString);
+            MySqlCommand command = new MySqlCommand(str, MySqlConnection);
+            MySqlConnection.Open();
             MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             sqlDataAdapter.Fill(table);
@@ -127,10 +127,9 @@ namespace CSVtoDatabase
         }
         public static DataTable QueryMySqlAsync(string str)
         {
-            mySqlConnection = new MySqlConnection(_connectionString);
-            MySqlCommand command = new MySqlCommand(str, mySqlConnection);
-            mySqlConnection.Open();
-            //SqlDataReader sqlDataReader = command.ExecuteReader();
+            MySqlConnection = new MySqlConnection(_connectionString);
+            MySqlCommand command = new MySqlCommand(str, MySqlConnection);
+            MySqlConnection.Open();
             MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             sqlDataAdapter.Fill(table);
@@ -144,30 +143,25 @@ namespace CSVtoDatabase
         /// <summary>
         /// Dispose resources
         /// </summary>
-        public static void  Dispose()
+        public static void Dispose()
         {
-            if (sqlConnection != null)
+            if (SqlConnection != null)
             {
-                sqlConnection.Dispose();
-                sqlConnection = null;
+                SqlConnection.Dispose();
+                SqlConnection = null;
             }
 
-            if (mySqlConnection != null)
+            if (MySqlConnection != null)
             {
-                mySqlConnection.Dispose();
-                mySqlConnection = null;
+                MySqlConnection.Dispose();
+                MySqlConnection = null;
             }
         }
 
-        public static int GetRecordCount(string dbname,string dtname , string connectionString)
+        public int GetRecordCount(string dbname, string dtname)
         {
             string queryString = $"use {dbname};select count(*) as 'totalcount' from {dtname};";
-            //sqlConnection = new SqlConnection(connectionString);
-            //sqlConnection.Open();
-            //SqlCommand command = new SqlCommand(queryString, sqlConnection);
-            //SqlDataAdapter adapter = new SqlDataAdapter(command);
-            mySqlConnection = new MySqlConnection(connectionString);
-            MySqlCommand command = new MySqlCommand(queryString, mySqlConnection);
+            MySqlCommand command = new MySqlCommand(queryString, MySqlConnection);
             MySqlDataAdapter adapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             adapter.Fill(table);

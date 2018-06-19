@@ -20,16 +20,20 @@ namespace CSVtoDatabase
         //private SqlConnection sqlConnection = null;
         //private MySqlConnection mySqlConnection = null;
         //private bool loaded = false;
-        public bool formClosing = false;
-        private bool connected = false;
-        private int exportedCount = 0;
+        public bool _formClosing = false;
+        private bool _connected = false;
+        private int _exportedCount = 0;
         public string UserFolder { get; set; } = Environment.GetEnvironmentVariable("USERPROFILE");
         public static string Str = "hHAHAHHA";
         //private OnClosingDialog onClosingDialog;
-        private string safeFileName = string.Empty;
+        private string _safeFileName = string.Empty;
+        private string _userId;
 
-        private SqlConnection SqlConnection => null;
-        private MySqlConnection MySqlConnection => null;
+        internal DataExporter _dataExporter;
+        internal DataImporter _dataImporter;
+        private SqlConnection ThisSqlConnection { get; set; }
+        private MySqlConnection ThisMySqlConnection { get; set; }
+        private DataExporter ThisExporter { get; set; }
 
         public Form1()
         {
@@ -40,10 +44,10 @@ namespace CSVtoDatabase
         ///  "abcde"
         /// </summary>
         /// <returns></returns>
-        private List<string> getColumnName(string str)
+        private List<string> GetColumnName(string str)
         {
             List<string> list = new List<string>();
-            string firstRow = getStrFileText().Substring(0, getStrFileText().IndexOf('\n'));
+            string firstRow = GetStrFileText().Substring(0, GetStrFileText().IndexOf('\n'));
             Regex regex = new Regex("\"[^\"\"]{0,}\"");
             MatchCollection matchCollection = regex.Matches(firstRow);
             foreach (Match match in matchCollection)
@@ -56,13 +60,13 @@ namespace CSVtoDatabase
         private void Form1_Load(object sender, EventArgs e)
         {
             textBoxFilePath.Text = Environment.GetEnvironmentVariable("USERPROFILE");
-            setLabelColor();
+            SetLabelColor();
             listBoxDatabase.SelectedIndex = 0;
             //setDbList();
             //DataBaseWriter.setProgressBar(toolStripProgressBar1);
             //DataBaseWriter.setStatusLabel(toolStripStatusLabel1);
         }
-        private void createLogFile()
+        private void CreateLogFile()
         {
             var filepath = $"{UserFolder}\\AppData\\Local\\CSVToDb\\main.log";
             if (!File.Exists(filepath))
@@ -73,7 +77,7 @@ namespace CSVtoDatabase
 
             return;
         }
-        private void setLabelColor()
+        private void SetLabelColor()
         {
             List<Label> list = new List<Label>();
             foreach (object obj in Controls)
@@ -109,22 +113,22 @@ namespace CSVtoDatabase
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 textBoxFilePath.Text = openFileDialog.FileName;
-                safeFileName = openFileDialog.SafeFileName;
+                _safeFileName = openFileDialog.SafeFileName;
                 textBoxLog.AppendText($"Selected file {textBoxFilePath.Text} \n");
             }
         }
-        private string getStrFileText()
+        private string GetStrFileText()
         {
             return "";
         }
         private void btnImport_Click(object sender, EventArgs e)
         {
-            if (!connected)
+            if (!_connected)
             {
-                MessageBox.Show("Please connect to database server.");
+                MessageBox.Show(@"Please connect to database server.");
                 return;
             }
-            if (!getDbList().Contains(comboBoxDbList.Text) || !getDtList().Contains(comboBoxDtList.Text))
+            if (!GetDbList().Contains(comboBoxDbList.Text) || !GetDtList().Contains(comboBoxDtList.Text))
             {
                 DialogResult dialogResult = MessageBox.Show(@"Do you want create with the specified name?",
                     @"Database or table not exists", MessageBoxButtons.YesNo);
@@ -139,16 +143,16 @@ namespace CSVtoDatabase
                 case 0:
                     {
                         connectionString = checkBoxIntegratedSecurity.Checked
-                            ? $"Data Source={textBoxServer.Text};Initial Catalog=master;Persist Security Info=True;Integrated Security=True"
-                            : $"Data Source={textBoxServer.Text};Initial Catalog=master;Persist Security Info=True;User ID={textBoxUId.Text};Password={textBoxPwd.Text}";
-                        DataImporter.DoWriteToSqlServer(dbname, dtname, connectionString, textBoxFilePath.Text, checkBoxIgnoreFirstLine.Checked);
+                            ? $"Data Source={Server};Initial Catalog=master;Persist Security Info=True;Integrated Security=True"
+                            : $"Data Source={Server};Initial Catalog=master;Persist Security Info=True;User ID={UserId};Password={textBoxPwd.Text}";
+                        _dataImporter.ImportToSqlServer(dbname, dtname, connectionString, textBoxFilePath.Text, checkBoxIgnoreFirstLine.Checked);
                     }
                     break;
                 case 1:
                     {
-                        connectionString = $"server={textBoxServer.Text};user id={textBoxUId.Text};Password={textBoxPwd.Text};database=mysql";
+                        connectionString = $"server={Server};user id={UserId};Password={textBoxPwd.Text};database=mysql";
                         //DataImporter.ImportToMySqlAsync(dbname, dtname, connectionString, textBoxFilePath.Text, null, true);
-                        DataImporter.ImportToMySql(dbname, dtname, connectionString, textBoxFilePath.Text,
+                        _dataImporter.ImportToMySql(dbname, dtname, connectionString, textBoxFilePath.Text,
                             checkBoxIgnoreFirstLine.Checked);
                     }
                     break;
@@ -156,14 +160,14 @@ namespace CSVtoDatabase
         }
         private void listBoxDatabase_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBoxLog.AppendText($"{listBoxDatabase.SelectedItem.ToString()} selected.\r\n");
+            textBoxLog.AppendText($"{listBoxDatabase.SelectedItem} selected.\r\n");
             int selected = listBoxDatabase.SelectedIndex;
             switch (selected)
             {
-                case 0: enableIntegratedSecurityChkbox(true); break;
-                default: enableIntegratedSecurityChkbox(false); break;
+                case 0: EnableIntegratedSecurityChkbox(true); break;
+                default: EnableIntegratedSecurityChkbox(false); break;
             }
-            connected = false;
+            _connected = false;
             //setDbList();
         }
         private void preferenceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -176,9 +180,9 @@ namespace CSVtoDatabase
         }
         private void comboBoxDbList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!connected)
+            if (!_connected)
                 return;
-            List<string> list = getDtList();
+            List<string> list = GetDtList();
             if (list.Count == 0)
             {
                 textBoxLog.AppendText("No table found...\r\n");
@@ -201,12 +205,15 @@ namespace CSVtoDatabase
         {
 
         }
-        private void setDbList()
+        private void SetDbList()
         {
-            comboBoxDbList.DataSource = getDbList();
+            comboBoxDbList.DataSource = GetDbList();
         }
-
-        private List<string> getDbList()
+        /// <summary>
+        /// Get list of database name
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetDbList()
         {
             string queryString;
             List<string> list = new List<string>();
@@ -214,13 +221,15 @@ namespace CSVtoDatabase
             #region Sql Server
             if (listBoxDatabase.SelectedIndex == 0)
             {
-                queryString = $@"select name from master.dbo.sysdatabases where dbid > 7";
+                queryString = $@"select name from master.dbo.sysdatabases ;";   //-- where dbid > 7
+                // If use integrated security
                 if (checkBoxIntegratedSecurity.Checked)
                 {
+                    ThisSqlConnection = new SqlConnection("Initial Catalog=master;Data Source=.;Integrated Security=True");
                     try
                     {
-                        table = new Helper().QuerySqlServer(queryString);
-                        connected = true;
+                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                        _connected = true;
                     }
                     catch (Exception e)
                     {
@@ -231,12 +240,11 @@ namespace CSVtoDatabase
 
                 else
                 {
+                    ThisSqlConnection = new SqlConnection($"Initial Catalog=master;Data Source=.;User ID={UserId};Password={Password}");
                     try
                     {
-                        table = new Helper("").QuerySqlServer(
-                            queryString,
-                            $"Data Source=.;Initial Catalog=master;User ID={textBoxUId.Text};Password={textBoxPwd.Text}");
-                        connected = true;
+                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                        _connected = true;
                     }
                     catch (Exception e)
                     {
@@ -259,8 +267,8 @@ namespace CSVtoDatabase
                 {
                     //Get list of database
                     table = new Helper().QueryMySql("show databases;",
-                        $"server=localhost;user id={textBoxUId.Text};persistsecurityinfo=True;database=mysql;password={textBoxPwd.Text}");
-                    connected = true;
+                        $"server=localhost;user id={UserId};persistsecurityinfo=True;database=mysql;password={textBoxPwd.Text}");
+                    _connected = true;
                 }
                 catch (Exception e)
                 {
@@ -277,8 +285,11 @@ namespace CSVtoDatabase
             #endregion
             return list;
         }
-
-        private List<string> getDtList()
+        /// <summary>
+        /// Get list of database name in specified database
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetDtList()
         {
             List<string> list = new List<string>();
             DataTable table = null;
@@ -289,25 +300,20 @@ namespace CSVtoDatabase
             if (listBoxDatabase.SelectedIndex == 0)
             {
                 connString =
-                    $"Data Source=.;Initial Catalog=master;User ID={textBoxUId.Text};Password={textBoxPwd.Text}";
-                try
-                {
+                    $"Data Source=.;Initial Catalog=master;User ID={UserId};Password={textBoxPwd.Text}";
+                //try
+                //{
 
-                    table = (checkBoxIntegratedSecurity.Checked)
-                        ? new Helper(connString).QuerySqlServer(
-                            $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'")
-                        : new Helper(connString).QuerySqlServer(
-                            $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'", connString);
-                }
-                catch (Exception e)
-                {
-                    textBoxLog.AppendText(e.StackTrace + "\r\n");
-                    return list;
-                }
+                table = new Helper(ThisSqlConnection).QuerySqlServer(
+                    $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'");
+                //}
+                //catch (Exception e)
+                //{
+                //    textBoxLog.AppendText(e.StackTrace + "\r\n");
+                //}
                 foreach (DataRow row in table.Rows)
                 {
                     list.Add(row[0].ToString());
-
                 }
             }
             //
@@ -315,7 +321,7 @@ namespace CSVtoDatabase
             //
             else if (listBoxDatabase.SelectedIndex == 1)
             {
-                connString = $"server={textBoxServer.Text};user id={textBoxUId.Text};persistsecurityinfo=False;database=mysql;password={textBoxPwd.Text}";
+                connString = $"server={Server};user id={UserId};persistsecurityinfo=False;database=mysql;password={textBoxPwd.Text}";
                 try
                 {
 
@@ -358,11 +364,11 @@ namespace CSVtoDatabase
         //
         private void button1_Click_1(object sender, EventArgs e)
         {
-            var msgbox_show = MessageBox.Show("", "Warning", MessageBoxButtons.YesNo);
-            textBoxLog.Text = msgbox_show.ToString();
-            string connectionString = $"server={textBoxServer.Text};user id={textBoxUId.Text};password={textBoxPwd.Text}";
-            //$"data source={textBoxServerAddress.Text};user id={textBoxUId.Text};password={textBoxPwd.Text};initial catalog=master";
-            int count = Helper.GetRecordCount(comboBoxDbList.Text, comboBoxDtList.Text, connectionString);
+            var msgboxShow = MessageBox.Show("", "Warning", MessageBoxButtons.YesNo);
+            textBoxLog.Text = msgboxShow.ToString();
+            string connectionString = $"server={Server};user id={UserId};password={Password}";
+            //$"data source={textBoxServerAddress.Text};user id={UserId};password={textBoxPwd.Text};initial catalog=master";
+            int count = new Helper(ThisSqlConnection).GetRecordCount(SelectDatabaseName,SelectDatatableName );
             MessageBox.Show(count.ToString());
         }
         /// <summary>
@@ -370,14 +376,10 @@ namespace CSVtoDatabase
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.formClosing = true;
-            if (DataExporter.thread != null)
-            {
-                DataExporter.thread.Suspend();
-            }
-            
+            this._formClosing = true;
+            new DataExporter(ThisSqlConnection).Suspend();
             //MessageBox.Show($@"Max:{toolStripProgressBar1.Maximum}---Value:{toolStripProgressBar1.Value}");
             if (toolStripProgressBar1.Maximum != toolStripProgressBar1.Value)
                 if (MessageBox.Show("Are you sure to exit?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -386,35 +388,31 @@ namespace CSVtoDatabase
                 }
                 else
                 {
-                    formClosing = false;
+                    _formClosing = false;
                     e.Cancel = true;
-                    if (DataExporter.thread.IsAlive)
-                    {
-                        DataExporter.thread.Resume();
-                    }
                 }
         }
         /// <summary>
         /// get the  boolean value that indicates whether the form is closing
         /// </summary>
         /// <returns></returns>
-        private bool getformClosing()
+        private bool GetformClosing()
         {
-            return formClosing;
+            return _formClosing;
         }
         /// <summary>
         /// Get <value>textBoxLog</value> control
         /// </summary>
         /// <returns></returns>
-        public TextBox gettextBoxLog()
+        public TextBox GettextBoxLog()
         {
             return textBoxLog;
         }
         //
         private void exitXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DataExporter.Dispose();
-            
+           new  DataExporter().Dispose();
+
             Application.Exit();
         }
         //
@@ -435,7 +433,7 @@ namespace CSVtoDatabase
         /// Disable the checkbox indicates whether the first line contains column names.
         /// </summary>
         /// <param name="disable"></param>
-        private void diableChkBox(bool disable)
+        private void DiableChkBox(bool disable)
         {
             if (disable)
             {
@@ -451,54 +449,61 @@ namespace CSVtoDatabase
             //    return;
             //}
             //MessageBox.Show(getDbList().Contains(comboBoxDbList.Text).ToString());
-            setCheckbox();
+            SetCheckbox();
         }
 
         private void comboBoxDtList_TextChanged(object sender, EventArgs e)
         {
-            setCheckbox();
+            SetCheckbox();
         }
         /// <summary>
         ///  Whether to disable checkBoxIgnoreFirstLine
         /// </summary>
-        void setCheckbox()
+        void SetCheckbox()
         {
-            if (!getDbList().Contains(comboBoxDbList.Text) || !getDtList().Contains(comboBoxDtList.Text))
+            if (!GetDbList().Contains(comboBoxDbList.Text) || !GetDtList().Contains(comboBoxDtList.Text))
             {
-                diableChkBox(true);
+                DiableChkBox(true);
             }
             else
             {
-                diableChkBox(false);
+                DiableChkBox(false);
             }
         }
         /// <summary>
         /// Enable <remarks>ddd</remarks>
         /// </summary>
         /// <param name="enable"></param>
-        void enableIntegratedSecurityChkbox(bool enable)
+        private void EnableIntegratedSecurityChkbox(bool enable)
         {
             if (enable)
-                ;
+            {
+            }
+
             checkBoxIntegratedSecurity.Checked = enable;
             checkBoxIntegratedSecurity.Enabled = enable;
         }
         //
         private void btnCheckConnection_Click(object sender, EventArgs e)
         {
-            if (textBoxServer.Text == string.Empty)
+            if (Server == string.Empty)
             {
-                MessageBox.Show("Server not specified...");
+                MessageBox.Show(@"Server not specified...");
                 return;
             }
-            if (!checkBoxIntegratedSecurity.Checked && (textBoxUId.Text == string.Empty || textBoxPwd.Text == string.Empty))
+            if (!checkBoxIntegratedSecurity.Checked && (UserId == string.Empty || Password == string.Empty))
             {
-                MessageBox.Show("Please login with userid and password.");
+                MessageBox.Show(@"Please login with userid and password.");
                 return;
             }
-            setDbList();
+            SetDbList();
             //connected = true;
-            textBoxLog.AppendText($"Connected to {textBoxServer.Text}.\r\n");
+            textBoxLog.AppendText($"Connected to {Server}.\r\n");
+        }
+
+        private void InitialDbConnection()
+        {
+            
         }
 
         private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -513,28 +518,52 @@ namespace CSVtoDatabase
 
         private void btnDisconnect_Click(object sender, EventArgs e)
         {
-            Helper.Dispose();
-            textBoxLog.AppendText("Disconnected.\r\n");
+            //Helper.Dispose();
+            if (ThisSqlConnection == null && ThisMySqlConnection == null)
+            {
+                textBoxLog.AppendText("No connection.\r\n");
+                return;
+            }
+            if (ThisSqlConnection != null && ThisSqlConnection.State != ConnectionState.Closed)
+            {
+                ThisSqlConnection.Dispose();
+                textBoxLog.AppendText("Connection closed.\r\n");
+            }
+
+            if (ThisSqlConnection != null && ThisSqlConnection.State == ConnectionState.Closed)
+            {
+                textBoxLog.AppendText("Connection has already been closed.\r\n");
+            }
+
+            if (ThisMySqlConnection != null && ThisMySqlConnection.State != ConnectionState.Closed)
+            {
+                ThisMySqlConnection.Dispose();
+                textBoxLog.AppendText("Connection closed.\r\n");
+            }
+
+            if (ThisMySqlConnection != null && ThisMySqlConnection.State == ConnectionState.Closed)
+            {
+                textBoxLog.AppendText("Connection has already been closed.\r\n");
+            }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Helper.Dispose();
-            //DataExporter.thread.Abort();
-            DataExporter.Dispose();
-            
-            //MessageBox.Show(toolStripProgressBar1.Value.ToString());
+            _dataExporter.Dispose();
         }
 
-        private async void btnExport_Click(object sender, EventArgs e)
+        private void BtnExport_Click(object sender, EventArgs e)
         {
-            if (!connected)
+            if (ThisSqlConnection == null || ThisSqlConnection.State != ConnectionState.Connecting)
             {
-                MessageBox.Show("No server connected.\r\n");
-                return;
+                if (ThisMySqlConnection == null || ThisMySqlConnection.State != ConnectionState.Connecting)
+                {
+                    MessageBox.Show("No server connected.\r\n");
+                    return;
+                }
             }
             string filePath = "";
-            DataSource source = DataSource.SqlServer;
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = @"CSV Files|*.csv|All Files|*.*";
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -545,47 +574,39 @@ namespace CSVtoDatabase
             {
                 return;
             }
-            String connectionString = "";
-            switch (listBoxDatabase.SelectedIndex)
-            {
-                case 0:
-                    {
-                        if (checkBoxIntegratedSecurity.Checked)
-                        {
-                            connectionString = checkBoxIntegratedSecurity.Checked
-                                ? $"Data Source={textBoxServer.Text};Initial Catalog=master;Persist Security Info=True;Integrated Security=True"
-                                : $"Data Source={textBoxServer.Text};Initial Catalog=master;Persist Security Info=True;User ID={textBoxUId.Text};Password={textBoxPwd.Text}";
-                        }
-                        else
-                            source = DataSource.SqlServer;
-                    }
-                    break;
-                case 1:
-                    {
-                        source = DataSource.MySql;
-                        connectionString = $"server={textBoxServer.Text};user id={textBoxUId.Text};password={textBoxPwd.Text};persistsecurityinfo=False;database=mysql"; break;
-                    }
-            }
 
             string dbname = comboBoxDbList.Text;
             string dtname = comboBoxDtList.Text;
             //Task<int> task =Task.Run(()=>//DataExporter.ExportToCsv();
-            DataExporter.ExportToCsv(dbname, dtname, connectionString, source, filePath);
+            _dataExporter.ExportToCsv(dbname, dtname, Source, filePath);
             //
             //int result = await task;
             //textBoxLog.AppendText($"Exported {export.Result} records.\r\n");
         }
 
-        private delegate void startExportDelegate();
-        private void startExport()
+        private void ExportFromSqlServer()
         {
 
         }
-
-        private void export(string dbname, string dtname, string connectionString, DataSource source, string filepath)
+        private void InitialExporter()
         {
-
+            switch (Source)
+            {
+                case DataSource.SqlServer: _dataExporter = new DataExporter(ThisSqlConnection);break;
+                 case DataSource.MySql:_dataExporter = new DataExporter(ThisMySqlConnection);break;
+            }
         }
+
+        private void InitialImporter()
+        {
+            switch (Source)
+            {
+                case DataSource.SqlServer: _dataImporter = new DataImporter(ThisSqlConnection);break;
+                case DataSource.MySql: _dataImporter = new DataImporter(ThisMySqlConnection);break;
+            }
+        }
+        private delegate void StartExportDelegate();
+
         private void checkBoxIgnoreFirstLine_CheckedChanged(object sender, EventArgs e)
         {
 
@@ -621,37 +642,51 @@ namespace CSVtoDatabase
 
         }
 
-        private List<Control> getAllControls()
-        {
-            List<Control> list = new List<Control>();
-            return list;
-        }
-
-        private List<Control> getTextBoxes()
-        {
-            List<Control> list = new List<Control>();
-            return list;
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
-            if (DataExporter.thread.ThreadState != ThreadState.Suspended)
+            if (_dataExporter.ThisThread.ThreadState != ThreadState.Suspended)
             {
-                DataExporter.thread.Suspend();
+                _dataExporter.ThisThread.Suspend();
                 btnPauseExport.Text = @"Resume";
             }
-            else if (DataExporter.thread.ThreadState != ThreadState.Running)
+            else if (_dataExporter.ThisThread.ThreadState != ThreadState.Running)
             {
-                DataExporter.thread.Resume();
+                _dataExporter.ThisThread.Resume();
                 btnPauseExport.Text = @"Pause";
             }
-            MessageBox.Show(DataExporter.thread.ThreadState.ToString());
+            MessageBox.Show(_dataExporter.ThisThread.ThreadState.ToString());
         }
 
         private void btnStopExport_Click(object sender, EventArgs e)
         {
-            DataExporter.thread.Abort();
-            DataExporter.Dispose();
+            _dataExporter.ThisThread.Abort();
+            _dataExporter.Dispose();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        internal string UserId => textBoxUId.Text;
+        internal string Password => textBoxPwd.Text;
+        internal string Server => textBoxServer.Text;
+        internal bool UseIntegratedSecurity => checkBoxIntegratedSecurity.Checked;
+        internal string SourceFilePath => textBoxFilePath.Text;
+        internal bool FirstLineContainsColumnNames => checkBoxIgnoreFirstLine.Checked;
+        internal String SelectDatabaseName => comboBoxDbList.Text;
+        internal String SelectDatatableName => comboBoxDbList.Text;
+        internal DataSource Source
+        {
+            get
+            {
+                switch (listBoxDatabase.SelectedIndex)
+                {
+                    case 0: return DataSource.SqlServer;
+                    case 1: return DataSource.MySql;
+                    default: return DataSource.SqlServer;
+                }
+            }
         }
     }
 }

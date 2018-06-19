@@ -1,30 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
-using System.Data;
 using System.IO;
-using System.Configuration;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Threading;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 
 namespace CSVtoDatabase
 {
     public class DataImporter
     {
-        private static Form1 mainForm = Program.getMainForm();
-        private static Thread thread = null;
-        static MySqlConnection mySqlConnection = null;
-        static SqlConnection sqlConnection = null;
-        static FileStream fileStream = null;
-        static StreamReader streamReader = null;
+        private static readonly Form1 mainForm = Program.GetMainForm();
+        private static Thread _thread = null;
+        MySqlConnection _mySqlConnection = null;
+        SqlConnection _sqlConnection;
+        FileStream _fileStream = null;
+        StreamReader _streamReader = null;
+
+        public DataImporter()
+        {
+
+        }
+
+        public DataImporter(SqlConnection connection)
+        {
+            _sqlConnection = connection;
+        }
+        public DataImporter(MySqlConnection connection)
+        {
+            _mySqlConnection = connection;
+        }
         /// <summary>
         /// Import data from text file to Sql server
         /// </summary>
@@ -34,14 +41,14 @@ namespace CSVtoDatabase
         /// <param name="controlSet"></param>
         /// <param name="firstLineColNames">Whether ignore first line, default value is <value>false</value></param>
         /// <returns></returns>
-        public static async Task<int> WriteToSqlServer(string dbname, string dtname, string filepath, ControlSet controlSet, bool firstLineColNames)
+        public async Task<int> WriteToSqlServer(string dbname, string dtname, string filepath, ControlSet controlSet, bool firstLineColNames)
         {
             if (string.IsNullOrWhiteSpace(filepath))
                 return -1;
             string connectionString = @"Data Source=.;Initial Catalog=master;Integrated Security=True";//ConfigurationManager.ConnectionStrings["DBmaster"].ConnectionString;
-            sqlConnection = new SqlConnection(connectionString);
-            fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-            streamReader = new StreamReader(fileStream);
+            _sqlConnection = new SqlConnection(connectionString);
+            _fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            _streamReader = new StreamReader(_fileStream);
             int importedRecordCount = 0;
             if (!File.Exists(filepath))
             {
@@ -50,21 +57,21 @@ namespace CSVtoDatabase
             }
             try
             {
-                sqlConnection.Open();
+                _sqlConnection.Open();
             }
             catch (Exception e)
             {
                 controlSet.textBoxLog.AppendText($"{e.Message}\r\n");
             }
             int currentLineNumber = 0;
-            long lineCount = getLineCount(streamReader, false);
+            long lineCount = GetLineCount(_streamReader, false);
             mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
                 new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar), (int)lineCount);
-            streamReader.BaseStream.Position = 0;
-            while (!streamReader.EndOfStream)
+            _streamReader.BaseStream.Position = 0;
+            while (!_streamReader.EndOfStream)
             {
                 currentLineNumber++;
-                string str = streamReader.ReadLine();
+                string str = _streamReader.ReadLine();
                 List<string> splited = GetSplitedStrings(str);
                 if (splited == null)
                 {
@@ -82,8 +89,8 @@ namespace CSVtoDatabase
                         }
                         string createDbCommandString = $"IF(DB_ID('{dbname}') IS NULL) CREATE DATABASE [{dbname}];";
                         string createDtCommandString = $"USE {dbname}; IF NOT EXISTS(SELECT [NAME] FROM SYS.TABLES WHERE [NAME] = '{dtname}') CREATE TABLE {dtname}({fields});";
-                        SqlCommand createDbCommand = new SqlCommand(createDbCommandString, sqlConnection);
-                        SqlCommand createDtCommand = new SqlCommand(createDtCommandString, sqlConnection);
+                        SqlCommand createDbCommand = new SqlCommand(createDbCommandString, _sqlConnection);
+                        SqlCommand createDtCommand = new SqlCommand(createDtCommandString, _sqlConnection);
                         createDbCommand.ExecuteNonQuery();
                         createDtCommand.ExecuteNonQuery();
                         createDtCommand.Dispose();
@@ -102,7 +109,7 @@ namespace CSVtoDatabase
                         }
                         else
                         {
-                            string str2 = "";
+                            string str2;
                             if (splited[i].Contains("'"))
                                 str2 = splited[i].Replace("'", "''");
                             else
@@ -111,7 +118,7 @@ namespace CSVtoDatabase
                         }
                     }
                     string insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
-                    SqlCommand insertCommand = new SqlCommand(insertCommandString, sqlConnection);
+                    SqlCommand insertCommand = new SqlCommand(insertCommandString, _sqlConnection);
                     try
                     {
                         await insertCommand.ExecuteNonQueryAsync();
@@ -121,7 +128,7 @@ namespace CSVtoDatabase
                         mainForm.textBoxLog.Invoke(
                             new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
                             $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
-                        var dialogResult = MessageBox.Show("Continue ?", "", MessageBoxButtons.YesNo);
+                        var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.OK)
                         {
 
@@ -138,21 +145,21 @@ namespace CSVtoDatabase
                 }
             }
             MessageBox.Show($@"Imported {importedRecordCount} record.");
-            sqlConnection.Dispose();
-            streamReader.Dispose();
-            fileStream.Dispose();
+            _sqlConnection.Dispose();
+            _streamReader.Dispose();
+            _fileStream.Dispose();
             return importedRecordCount;
         }
 
-        public static int DoWriteToSqlServer(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
+        public int ImportToSqlServer(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
         {
-            thread = new Thread(() => WriteToSqlServer(dbname, dtname, connectionString, filepath, firstLineColNames));
-            thread.Start();
+            _thread = new Thread(() => WriteToSqlServer(dbname, dtname, connectionString, filepath, firstLineColNames));
+            _thread.Start();
             return 0;
         }
 
         public delegate int WriteToSqlServerDelegate(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames);
-        public static int WriteToSqlServer(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
+        public int WriteToSqlServer(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
         {
             if (!File.Exists(filepath))
             {
@@ -161,10 +168,9 @@ namespace CSVtoDatabase
             }
             if (string.IsNullOrWhiteSpace(filepath))
                 return -1;
-            string _connectionString = connectionString;
-            sqlConnection = new SqlConnection(_connectionString);
-            fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-            streamReader = new StreamReader(fileStream);
+            _sqlConnection = new SqlConnection(connectionString);
+            _fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            _streamReader = new StreamReader(_fileStream);
             int importedRecordCount = 0;
             if (!File.Exists(filepath))
             {
@@ -173,21 +179,21 @@ namespace CSVtoDatabase
             }
             try
             {
-                sqlConnection.Open();
+                _sqlConnection.Open();
             }
             catch (Exception e)
             {
                 mainForm.textBoxLog.AppendText($"{e.Message}\r\n");
             }
             int currentLineNumber = 0;
-            long lineCount = getLineCount(streamReader, false);
+            long lineCount = GetLineCount(_streamReader, false);
             mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
                 new OperateControls.setProgressBarMaxDelegate(OperateControls.SetProgressBarMax), (int)lineCount);
-            streamReader.BaseStream.Position = 0;
-            while (!streamReader.EndOfStream)
+            _streamReader.BaseStream.Position = 0;
+            while (!_streamReader.EndOfStream)
             {
                 currentLineNumber++;
-                string str = streamReader.ReadLine();
+                string str = _streamReader.ReadLine();
                 List<string> splited = GetSplitedStrings(str);
                 if (splited == null)
                 {
@@ -204,8 +210,8 @@ namespace CSVtoDatabase
                         }
                         string createDbCommandString = $"IF(DB_ID('{dbname}') IS NULL) CREATE DATABASE [{dbname}];";
                         string createDtCommandString = $"USE {dbname}; IF NOT EXISTS(SELECT [NAME] FROM SYS.TABLES WHERE [NAME] = '{dtname}') CREATE TABLE [{dtname}]({fields});";
-                        SqlCommand createDbCommand = new SqlCommand(createDbCommandString, sqlConnection);
-                        SqlCommand createDtCommand = new SqlCommand(createDtCommandString, sqlConnection);
+                        SqlCommand createDbCommand = new SqlCommand(createDbCommandString, _sqlConnection);
+                        SqlCommand createDtCommand = new SqlCommand(createDtCommandString, _sqlConnection);
                         createDbCommand.ExecuteNonQuery();
                         createDtCommand.ExecuteNonQuery();
                         createDtCommand.Dispose();
@@ -221,18 +227,12 @@ namespace CSVtoDatabase
                                 valueString += $"'{splited[i]}'";
                                 break;
                             }
-                            else
-                            {
-                                string str2 = "";
-                                if (splited[i].Contains("'"))
-                                    str2 = splited[i].Replace("'", "''");
-                                else
-                                    str2 = splited[i];
-                                valueString += $"'{str2}',";
-                            }
+                            string str2;
+                            str2 = splited[i].Contains("'") ? splited[i].Replace("'", "''") : splited[i];
+                            valueString += $"'{str2}',";
                         }
                         string insertCommandString = $"USE {dbname};INSERT INTO [{dtname}] VALUES({valueString});";
-                        SqlCommand insertCommand = new SqlCommand(insertCommandString, sqlConnection);
+                        SqlCommand insertCommand = new SqlCommand(insertCommandString, _sqlConnection);
                         try
                         {
                             insertCommand.ExecuteNonQueryAsync();
@@ -271,18 +271,15 @@ namespace CSVtoDatabase
                             valueString += $"'{splited[i]}'";
                             break;
                         }
+                        string str2;
+                        if (splited[i].Contains("'"))
+                            str2 = splited[i].Replace("'", "''");
                         else
-                        {
-                            string str2 = "";
-                            if (splited[i].Contains("'"))
-                                str2 = splited[i].Replace("'", "''");
-                            else
-                                str2 = splited[i];
-                            valueString += $"'{str2}',";
-                        }
+                            str2 = splited[i];
+                        valueString += $"'{str2}',";
                     }
                     string insertCommandString = $"USE {dbname};INSERT INTO [{dtname}] VALUES({valueString});";
-                    SqlCommand insertCommand = new SqlCommand(insertCommandString, sqlConnection);
+                    SqlCommand insertCommand = new SqlCommand(insertCommandString, _sqlConnection);
                     try
                     {
                         insertCommand.ExecuteNonQueryAsync();
@@ -292,7 +289,7 @@ namespace CSVtoDatabase
                         mainForm.textBoxLog.Invoke(
                             new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
                             $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
-                        var dialogResult = MessageBox.Show("Continue ?", "", MessageBoxButtons.YesNo);
+                        var dialogResult = MessageBox.Show(@"Continue ?", "", buttons: MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.OK)
                         {
 
@@ -312,9 +309,9 @@ namespace CSVtoDatabase
                 }
             }
             MessageBox.Show($@"Imported {importedRecordCount} record.");
-            sqlConnection.Dispose();
-            streamReader.Dispose();
-            fileStream.Dispose();
+            _sqlConnection.Dispose();
+            _streamReader.Dispose();
+            _fileStream.Dispose();
             return importedRecordCount;
         }
 
@@ -333,7 +330,7 @@ namespace CSVtoDatabase
             return list;
         }
 
-        public static long getLineCount(StreamReader reader, bool ignoreFirstLine)
+        public static long GetLineCount(StreamReader reader, bool ignoreFirstLine)
         {
             long count = 0;
             while (!reader.EndOfStream)
@@ -347,42 +344,42 @@ namespace CSVtoDatabase
             return ignoreFirstLine ? count - 1 : count;
         }
 
-        public static void setProgressBar(ToolStripProgressBar s)
+        public void SetProgressBar(ToolStripProgressBar s)
         {
             s.Value = 80;
         }
 
-        public static void setProgressBarValue(ToolStripProgressBar o, int value)
+        public void SetProgressBarValue(ToolStripProgressBar o, int value)
         {
             o.Value = value;
         }
 
-        public static void setProgressBarMaxValue(ToolStripProgressBar o, int value)
+        public void SetProgressBarMaxValue(ToolStripProgressBar o, int value)
         {
             o.Maximum = value;
         }
 
-        public static void setStatusLabel(ToolStripStatusLabel t)
+        public void SetStatusLabel(ToolStripStatusLabel t)
         {
             //t.Text = @"1000000/1000000   Error occurs.";
         }
 
-        public static void Pause()
+        public void Pause()
         {
-            bool formClosing = Program.getMainForm().formClosing;
+            bool formClosing = Program.GetMainForm()._formClosing;
             while (formClosing)
             {
-                formClosing = Program.getMainForm().formClosing;
+                formClosing = Program.GetMainForm()._formClosing;
             }
         }
 
-        public static async Task<int> ImportToMySqlAsync(string dbname, string dtname, string connectionString, string filepath, ControlSet controlSet, bool firstLineColNames)
+        public async Task<int> ImportToMySqlAsync(string dbname, string dtname, string connectionString, string filepath, ControlSet controlSet, bool firstLineColNames)
         {
             if (string.IsNullOrWhiteSpace(filepath))
                 return -1;
-            string _connectionString = connectionString;// @"server=localhost;user id=root;persistsecurityinfo=False;database=sakila";
+            // @"server=localhost;user id=root;persistsecurityinfo=False;database=sakila";
             MySqlConnection mySqlConnection;
-            mySqlConnection = new MySqlConnection(_connectionString);
+            mySqlConnection = new MySqlConnection(connectionString);
             FileStream fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
 
             StreamReader streamReader = new StreamReader(fileStream);
@@ -401,8 +398,8 @@ namespace CSVtoDatabase
             //    controlSet.textBoxLog.AppendText($"{e.Message}\r\n");
             //}            
             int currentLineNumber = 0;
-            long lineCount = getLineCount(streamReader, false);
-            setProgressBarMaxValue(controlSet.toolStripProgressBar, (int)lineCount);
+            long lineCount = GetLineCount(streamReader, false);
+            SetProgressBarMaxValue(controlSet.toolStripProgressBar, (int)lineCount);
             streamReader.BaseStream.Position = 0;
             while (!streamReader.EndOfStream)
             {
@@ -451,7 +448,7 @@ namespace CSVtoDatabase
                                 valueString += $"'{splited[i]}'";
                                 break;
                             }
-                            string str2 = "";
+                            string str2;
                             if (splited[i].Contains("'"))
                                 str2 = splited[i].Replace("'", "''");
                             else
@@ -470,8 +467,8 @@ namespace CSVtoDatabase
                         catch (Exception e)
                         {
                             //controlSet.toolStripStatusLabeL.Text += @"  Text format incorrect.";
-                            Program.getMainForm().gettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
-                            var dialogResult = MessageBox.Show("Continue ?", "", MessageBoxButtons.YesNo);
+                            Program.GetMainForm().GettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                            var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                             if (dialogResult == DialogResult.OK)
                             {
 
@@ -499,7 +496,7 @@ namespace CSVtoDatabase
                         }
                         else
                         {
-                            string str2 = "";
+                            string str2;
                             if (splited[i].Contains("'"))
                                 str2 = splited[i].Replace("'", "''");
                             else
@@ -520,7 +517,7 @@ namespace CSVtoDatabase
                     catch (Exception e)
                     {
                         //controlSet.toolStripStatusLabeL.Text += @"  Text format incorrect.";
-                        Program.getMainForm().gettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                        Program.GetMainForm().GettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                         var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
                         {
@@ -546,21 +543,19 @@ namespace CSVtoDatabase
             //thread = new Thread(()=>ImportToMySql());
             return 0;
         }
-        public static int ImportToMySql(string dbname, string dtname, string connectionString, string filepath, bool firstLineColName)
+        public int ImportToMySql(string dbname, string dtname, string connectionString, string filepath, bool firstLineColName)
         {
-            thread = new Thread(() =>
+            _thread = new Thread(() =>
                 ImportToMySqlThread(dbname, dtname, connectionString, filepath, firstLineColName));
-            thread.Start();
+            _thread.Start();
             return 0;
         }
         public delegate int ImpportToMySqlDelegate(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames);
-        public static int ImportToMySqlThread(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
+        public int ImportToMySqlThread(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
         {
             if (string.IsNullOrWhiteSpace(filepath))
                 return -1;
-            string _connectionString = connectionString;
-
-            mySqlConnection = new MySqlConnection(_connectionString);
+            _mySqlConnection = new MySqlConnection(connectionString);
             FileStream fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
 
             StreamReader streamReader = new StreamReader(fileStream);
@@ -570,9 +565,9 @@ namespace CSVtoDatabase
                 MessageBox.Show($@"File {filepath} no found.");
                 return 0;
             }
-            mySqlConnection.Open();
+            _mySqlConnection.Open();
             int currentLineNumber = 0;
-            long lineCount = getLineCount(streamReader, false);
+            long lineCount = GetLineCount(streamReader, false);
             mainForm.toolStripProgressBar1.GetCurrentParent()
                 .Invoke(new OperateControls.setProgressBarMaxDelegate(OperateControls.SetProgressBarMax), (int)lineCount);
             streamReader.BaseStream.Position = 0;
@@ -601,11 +596,11 @@ namespace CSVtoDatabase
                         }
                         string createDbCommandString = $"CREATE DATABASE IF NOT EXISTS {dbname};";
                         string createDtCommandString = $"USE {dbname} ; CREATE TABLE IF NOT EXISTS {dtname}({fields});";
-                        MySqlCommand createDbCommand = new MySqlCommand(createDbCommandString, mySqlConnection);
+                        MySqlCommand createDbCommand = new MySqlCommand(createDbCommandString, _mySqlConnection);
                         mainForm.textBoxLog.Invoke(
                             new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
                             $"Executed {createDbCommandString} successfully.\r\n");
-                        MySqlCommand createDtCommand = new MySqlCommand(createDtCommandString, mySqlConnection);
+                        MySqlCommand createDtCommand = new MySqlCommand(createDtCommandString, _mySqlConnection);
                         mainForm.textBoxLog.Invoke(
                             new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
                             $"Executed {createDbCommandString} successfully.\r\n");
@@ -624,7 +619,7 @@ namespace CSVtoDatabase
                                 valueString += $"'{splited[i]}'";
                                 break;
                             }
-                            string str2 = "";
+                            string str2;
                             if (splited[i].Contains("'"))
                                 str2 = splited[i].Replace("'", "''");
                             else
@@ -632,18 +627,18 @@ namespace CSVtoDatabase
                             valueString += $"'{str2}',";
                         }
                         string insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
-                        MySqlCommand insertCommand = new MySqlCommand(insertCommandString, mySqlConnection);
+                        MySqlCommand insertCommand = new MySqlCommand(insertCommandString, _mySqlConnection);
                         try
                         {
                             insertCommand.ExecuteNonQueryAsync();
                         }
                         catch (Exception e)
                         {
-                            Program.getMainForm().gettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                            Program.GetMainForm().GettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                             mainForm.textBoxLog.Invoke(
                                 new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
                                 $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
-                            var dialogResult = MessageBox.Show("Continue ?", "", MessageBoxButtons.YesNo);
+                            var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                             if (dialogResult == DialogResult.OK)
                             {
                                 continue;
@@ -669,18 +664,15 @@ namespace CSVtoDatabase
                             valueString += $"'{splited[i]}'";
                             break;
                         }
-                        else
-                        {
-                            string str2 = "";
+                            string str2;
                             if (splited[i].Contains("'"))
                                 str2 = splited[i].Replace("'", "''");
                             else
                                 str2 = splited[i];
                             valueString += $"'{str2}',";
-                        }
                     }
                     string insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
-                    MySqlCommand insertCommand = new MySqlCommand(insertCommandString, mySqlConnection);
+                    MySqlCommand insertCommand = new MySqlCommand(insertCommandString, _mySqlConnection);
                     try
                     {
                         mainForm.textBoxLog.Invoke(
@@ -710,15 +702,14 @@ namespace CSVtoDatabase
                 }
             }
             MessageBox.Show($@"Imported {importedRecordCount} record.");
-            mySqlConnection.Dispose();
+            _mySqlConnection.Dispose();
             streamReader.Dispose();
             fileStream.Dispose();
             return importedRecordCount;
         }
-        internal static void Dispose()
+        internal void Dispose()
         {
-            if (thread != null)
-                thread.Abort();
+            _thread?.Abort();
         }
     }
 }

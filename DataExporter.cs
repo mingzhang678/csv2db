@@ -12,51 +12,68 @@ using MySql.Data.MySqlClient;
 
 namespace CSVtoDatabase
 {
-    class DataExporter
+   public  class DataExporter
     {
-        private static Form1 mainForm = Program.getMainForm();
-        private static SqlConnection sqlConnection { get; set; }
+        private readonly Form1 MainForm = Program.GetMainForm();
+        private SqlConnection ThisSqlConnection;
+        private MySqlConnection ThisMySqlConnection;
+        public Thread ThisThread;
+        private FileStream ThisFileStream;
+        private StreamWriter ThisStreamWriter;
 
-        private static MySqlConnection mySqlConnection { get; set; }
-        internal static Thread thread { get; set; }
-        private static FileStream fileStream { get; set; }
-        private static StreamWriter writer { get; set; }
-        public static int ExportToCsv(string dbname, string dtname, string connectionString, DataSource source,
-            string filepath)
+        public DataExporter()
         {
-            mainForm.textBoxLog.AppendText($"Exporting to {filepath}...\r\n");
+
+        }
+        /// <summary>
+        /// dd
+        /// </summary>
+        /// <param name="connection"></param>
+        public DataExporter(SqlConnection connection)
+        {
+            ThisSqlConnection = connection;
+        }
+        public DataExporter(MySqlConnection connection)
+        {
+            ThisMySqlConnection = connection;
+        }
+        public int ExportToCsv(string dbname, string dtname, DataSource source, string filepath)
+        {
+            MainForm.textBoxLog.AppendText($"Exporting to {filepath}...\r\n");
             // Total count of records
-            int recordCount = getRecordCount(dbname, dtname, connectionString, source);
+            int recordCount = GetRecordCount(dbname, dtname, source);
+            // Count of records exported
             int exportedCount = 0;
-            mainForm.toolStripStatusLabel1.Text = $@"Export progxress: {exportedCount}/{recordCount}";
+            MainForm.toolStripStatusLabel1.Text = $@"Export progxress: {exportedCount}/{recordCount}";
             // Names of columns
-            List<string> columnNames = GetColumnNames(dbname, dtname, connectionString, source);
+            List<string> columnNames = GetColumnNames(dbname, dtname, source);
             // Set progressbar max value to recordCount
-            mainForm.toolStripProgressBar1.Maximum = recordCount;
-            DataTable table = null;
-            string _queryString = "";
+            MainForm.toolStripProgressBar1.Maximum = recordCount;
+            DataTable table;
+            string queryString = "";
             // Datasource
             switch (source)
             {
                 // Sql Server
                 case DataSource.SqlServer:
                     {
-                        _queryString = $"select * from {dbname}.dbo.{dtname}";
+                        queryString = $"select * from {dbname}.dbo.{dtname}";
                     }
                     break;
                 // MySql
                 case DataSource.MySql:
                     {
-                        _queryString = $"use {dbname};select * from {dtname};";
+                        queryString = $"use {dbname};select * from {dtname};";
                     }
                     break;
             }
+            // the quantity of field
             int fieldCount = columnNames.Count;
-            table = GetDataTable(_queryString, connectionString, source);
+            table = GetDataTable(queryString, source);
             if (File.Exists(filepath))
                 File.Delete(filepath);
-            fileStream = new FileStream(filepath, FileMode.Create);
-            writer = new StreamWriter(fileStream);
+            ThisFileStream = new FileStream(filepath, FileMode.Create);
+            ThisStreamWriter = new StreamWriter(ThisFileStream);
             string lineString = "";
             for (int i = 0; i < columnNames.Count; i++)
             {
@@ -70,18 +87,83 @@ namespace CSVtoDatabase
                 }
             }
 
-            mainForm.textBoxLog.AppendText($"Start export.\r\n");
+            MainForm.textBoxLog.AppendText($"Start export.\r\n");
             int success = -1;
-            success = WriteToCsv(table, fieldCount, recordCount, writer);
+            success = WriteToCsv(table, fieldCount, recordCount, ThisStreamWriter);
             return exportedCount;
         }
-        public static int WriteToCsv(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbname"></param>
+        /// <param name="dtname"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="source"></param>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public int ExportToCsv(string dbname, string dtname, string connectionString, DataSource source, string filepath)
         {
-            thread = new Thread(() => WriteRecordsThread(table, fieldCount, recordCount, writer))
+            MainForm.textBoxLog.AppendText($"Exporting to {filepath}...\r\n");
+            // Total count of records
+            int recordCount = GetRecordCount(dbname, dtname, connectionString, source);
+            // Count of records exported
+            int exportedCount = 0;
+            MainForm.toolStripStatusLabel1.Text = $@"Export progxress: {exportedCount}/{recordCount}";
+            // Names of columns
+            List<string> columnNames = GetColumnNames(dbname, dtname, connectionString, source);
+            // Set progressbar max value to recordCount
+            MainForm.toolStripProgressBar1.Maximum = recordCount;
+            DataTable table;
+            string queryString = "";
+            // Datasource
+            switch (source)
+            {
+                // Sql Server
+                case DataSource.SqlServer:
+                    {
+                        queryString = $"select * from {dbname}.dbo.{dtname}";
+                    }
+                    break;
+                // MySql
+                case DataSource.MySql:
+                    {
+                        queryString = $"use {dbname};select * from {dtname};";
+                    }
+                    break;
+            }
+            // the quantity of field
+            int fieldCount = columnNames.Count;
+            table = GetDataTable(queryString, connectionString, source);
+            if (File.Exists(filepath))
+                File.Delete(filepath);
+            ThisFileStream = new FileStream(filepath, FileMode.Create);
+            ThisStreamWriter = new StreamWriter(ThisFileStream);
+            string lineString = "";
+            for (int i = 0; i < columnNames.Count; i++)
+            {
+                if (i == columnNames.Count - 1)
+                {
+                    lineString += $"\"{columnNames[i]}\"";
+                }
+                else
+                {
+                    lineString += $"\"{columnNames[i]}\",";
+                }
+            }
+
+            MainForm.textBoxLog.AppendText($"Start export.\r\n");
+            int success = -1;
+            success = WriteToCsv(table, fieldCount, recordCount, ThisStreamWriter);
+            return exportedCount;
+        }
+        public int WriteToCsv(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
+        {
+            ThisThread = new Thread(() => WriteRecordsThread(table, fieldCount, recordCount, writer))
             {
                 IsBackground = false
             };
-            thread.Start();
+            ThisThread.Start();
             return 0;
         }
         /// <summary>
@@ -96,15 +178,15 @@ namespace CSVtoDatabase
         /// 
         /// </summary>
         /// <param name="text"></param>
-        private delegate void setStatusLabelTextDelegate(string text);
+        private delegate void SetStatusLabelTextDelegate(string text);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="value"></param>
-        private delegate void setProgressBarValueDelegate(int value);
+        private delegate void SetProgressBarValueDelegate(int value);
 
-        internal delegate void appendTextBoxTextDeleget(string text);
-        private static int WriteRecordsThread(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
+        internal delegate void AppendTextBoxTextDeleget(string text);
+        private int WriteRecordsThread(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
         {
             int exportedCount = 0;
             string lineString = "";
@@ -123,11 +205,11 @@ namespace CSVtoDatabase
                 }
                 writer.WriteLine(lineString);
                 exportedCount++;
-                mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText), $"{exportedCount} / {recordCount}");
-                mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar), exportedCount);
+                MainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText), $"{exportedCount} / {recordCount}");
+                MainForm.toolStripProgressBar1.GetCurrentParent().Invoke(new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar), exportedCount);
                 if (recordCount == exportedCount)
                 {
-                    mainForm.textBoxLog.Invoke(new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText), $"Exported {exportedCount} records.\r\n");
+                    MainForm.textBoxLog.Invoke(new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText), $"Exported {exportedCount} records.\r\n");
                     //fileStream.Dispose();
                     Dispose();
                 }
@@ -138,58 +220,83 @@ namespace CSVtoDatabase
         /// <summary>
         /// Release resources
         /// </summary>
-        internal static void Dispose()
+        internal void Dispose()
         {
-            writer?.Dispose();
-            fileStream?.Dispose();
-            if (thread != null)
-            {
-                //if (thread.IsAlive)
-                thread.Resume();
-                    thread.Abort();
-            }
+            ThisStreamWriter?.Dispose();
+            ThisFileStream?.Dispose();
+            //if (thread.IsAlive)
+            ThisThread?.Abort();
         }
-
-        public static DataTable GetDataTable(string queryString, string connectionString, DataSource source)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="queryString"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public DataTable GetDataTable(string queryString, DataSource source)
         {
             DataTable table = null;
             switch (source)
             {
                 case DataSource.SqlServer:
                     {
-                        table = new Helper().QuerySqlServer(queryString, connectionString);
+                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
                     }
                     break;
                 case DataSource.MySql:
                     {
-                        table = new Helper().QueryMySql(queryString, connectionString);
+                        table = new Helper(ThisMySqlConnection).QueryMySql(queryString);
                     }
                     break;
             }
             return table;
         }
 
-        public static List<string> GetColumnNames(string dbname, string dtname, string connectionString, DataSource source)
+        public DataTable GetDataTable(string queryString, string connectionString, DataSource source)
+        {
+            DataTable table = null;
+            switch (source)
+            {
+                case DataSource.SqlServer:
+                    {
+                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                    }
+                    break;
+                case DataSource.MySql:
+                    {
+                        table = new Helper(ThisMySqlConnection).QueryMySql(queryString);
+                    }
+                    break;
+            }
+            return table;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbname"></param>
+        /// <param name="dtname"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public List<string> GetColumnNames(string dbname, string dtname, DataSource source)
         {
             List<string> list = new List<string>();
             DataTable table = new DataTable();
-            string _connectionString = connectionString;
-            string _queryString = "";
+            string queryString = "";
             switch (source)
             {
                 case DataSource.SqlServer:
                     {
 
-                        _queryString = $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
-                        sqlConnection = new SqlConnection(_connectionString);
+                        queryString = $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
                         //try
                         //{
-                        sqlConnection.Open();
+                        ThisSqlConnection.Open();
                         //}
                         //catch (Exception e)
                         //{
                         //}
-                        SqlCommand command = new SqlCommand(_queryString, sqlConnection);
+                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         adapter.Fill(table);
                         command.Dispose();
@@ -198,10 +305,9 @@ namespace CSVtoDatabase
                     ; break;
                 case DataSource.MySql:
                     {
-                        _queryString = $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
-                        mySqlConnection = new MySqlConnection(_connectionString);
-                        mySqlConnection.Open();
-                        MySqlCommand command = new MySqlCommand(_queryString, mySqlConnection);
+                        queryString = $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
+                        ThisMySqlConnection.Open();
+                        MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                         adapter.Fill(table);
                         command.Dispose();
@@ -216,7 +322,56 @@ namespace CSVtoDatabase
             }
             return list;
         }
-        public static int getRecordCount(string dbname, string dtname, string connectionString, DataSource source)
+
+        public List<string> GetColumnNames(string dbname, string dtname, string connectionString, DataSource source)
+        {
+            List<string> list = new List<string>();
+            DataTable table = new DataTable();
+            string queryString = "";
+            switch (source)
+            {
+                case DataSource.SqlServer:
+                {
+
+                    queryString =
+                        $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
+                    ThisSqlConnection = new SqlConnection(connectionString);
+                    //try
+                    //{
+                    ThisSqlConnection.Open();
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //}
+                    SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    adapter.Fill(table);
+                    command.Dispose();
+                    adapter.Dispose();
+                }
+                    ;
+                    break;
+                case DataSource.MySql:
+                {
+                    queryString =
+                        $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
+                    ThisMySqlConnection = new MySqlConnection(connectionString);
+                    ThisMySqlConnection.Open();
+                    MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    adapter.Fill(table);
+                    command.Dispose();
+                    adapter.Dispose();
+                }
+                    break;
+            }
+
+            foreach (DataRow row in table.Rows)
+                list.Add(row["COLUMN_NAME"].ToString());
+            return list;
+        }
+
+        public int GetRecordCount(string dbname, string dtname,DataSource source)
         {
             string queryString = $"USE {dbname};SELECT COUNT(*) as 'totalcount' FROM {dtname}";
             object count = 0;
@@ -224,9 +379,8 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        sqlConnection = new SqlConnection(connectionString);
-                        sqlConnection.Open();
-                        SqlCommand command = new SqlCommand(queryString, sqlConnection);
+                        ThisSqlConnection.Open();
+                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable table = new DataTable();
                         adapter.Fill(table);
@@ -235,9 +389,8 @@ namespace CSVtoDatabase
                     break;
                 case DataSource.MySql:
                     {
-                        mySqlConnection = new MySqlConnection(connectionString);
-                        mySqlConnection.Open();
-                        MySqlCommand commmand = new MySqlCommand(queryString, mySqlConnection);
+                        ThisMySqlConnection.Open();
+                        MySqlCommand commmand = new MySqlCommand(queryString, ThisMySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(commmand);
                         DataTable table = new DataTable();
                         adapter.Fill(table);
@@ -248,5 +401,58 @@ namespace CSVtoDatabase
             return Convert.ToInt32(count);
         }
 
+ /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbname"></param>
+        /// <param name="dtname"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public int GetRecordCount(string dbname, string dtname, string connectionString, DataSource source)
+        {
+            string queryString = $"USE {dbname};SELECT COUNT(*) as 'totalcount' FROM {dtname}";
+            object count = 0;
+            switch (source)
+            {
+                case DataSource.SqlServer:
+                    {
+                        ThisSqlConnection = new SqlConnection(connectionString);
+                        ThisSqlConnection.Open();
+                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+                        count = table.Rows[0][0];
+                    }
+                    break;
+                case DataSource.MySql:
+                    {
+                        ThisMySqlConnection = new MySqlConnection(connectionString);
+                        ThisMySqlConnection.Open();
+                        MySqlCommand commmand = new MySqlCommand(queryString, ThisMySqlConnection);
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(commmand);
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+                        count = table.Rows[0][0];
+                    }
+                    break;
+            }
+            return Convert.ToInt32(count);
+        }
+
+        public void Suspend() => ThisThread?.Suspend();
+
+        public void Resume()
+        {
+            this.ThisThread.Resume();
+        }
+        ~DataExporter()
+        {
+            ThisStreamWriter?.Dispose();
+            ThisMySqlConnection?.Dispose();
+            ThisFileStream?.Dispose();
+            ThisThread?.Abort();
+        }
     }
 }

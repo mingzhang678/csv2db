@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSVtoDatabase
 {
-    enum DataSource
+    public enum DataSource
     {
         SqlServer = 0,
         MySql = 1
