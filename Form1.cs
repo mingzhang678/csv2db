@@ -20,20 +20,18 @@ namespace CSVtoDatabase
         //private SqlConnection sqlConnection = null;
         //private MySqlConnection mySqlConnection = null;
         //private bool loaded = false;
-        public bool _formClosing = false;
-        private bool _connected = false;
+        private bool _isImporting;
+        private bool _isExporting;
+        public bool _formClosing;
+        private bool _connected;
         private int _exportedCount = 0;
         public string UserFolder { get; set; } = Environment.GetEnvironmentVariable("USERPROFILE");
-        public static string Str = "hHAHAHHA";
         //private OnClosingDialog onClosingDialog;
         private string _safeFileName = string.Empty;
-        private string _userId;
-
         internal DataExporter _dataExporter;
         internal DataImporter _dataImporter;
-        private SqlConnection ThisSqlConnection { get; set; }
-        private MySqlConnection ThisMySqlConnection { get; set; }
-        private DataExporter ThisExporter { get; set; }
+        private SqlConnection _sqlConnection { get; set; }
+        private MySqlConnection _mySqlConnection { get; set; }
 
         public Form1()
         {
@@ -225,10 +223,10 @@ namespace CSVtoDatabase
                 // If use integrated security
                 if (checkBoxIntegratedSecurity.Checked)
                 {
-                    ThisSqlConnection = new SqlConnection("Initial Catalog=master;Data Source=.;Integrated Security=True");
+                    _sqlConnection = new SqlConnection("Initial Catalog=master;Data Source=.;Integrated Security=True");
                     try
                     {
-                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                        table = new Helper(_sqlConnection).QuerySqlServer(queryString);
                         _connected = true;
                     }
                     catch (Exception e)
@@ -240,10 +238,10 @@ namespace CSVtoDatabase
 
                 else
                 {
-                    ThisSqlConnection = new SqlConnection($"Initial Catalog=master;Data Source=.;User ID={UserId};Password={Password}");
+                    _sqlConnection = new SqlConnection($"Initial Catalog=master;Data Source=.;User ID={UserId};Password={Password}");
                     try
                     {
-                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                        table = new Helper(_sqlConnection).QuerySqlServer(queryString);
                         _connected = true;
                     }
                     catch (Exception e)
@@ -304,7 +302,7 @@ namespace CSVtoDatabase
                 //try
                 //{
 
-                table = new Helper(ThisSqlConnection).QuerySqlServer(
+                table = new Helper(_sqlConnection).QuerySqlServer(
                     $"use {comboBoxDbList.Text}; select name from sysobjects where xtype = 'U'");
                 //}
                 //catch (Exception e)
@@ -312,9 +310,7 @@ namespace CSVtoDatabase
                 //    textBoxLog.AppendText(e.StackTrace + "\r\n");
                 //}
                 foreach (DataRow row in table.Rows)
-                {
                     list.Add(row[0].ToString());
-                }
             }
             //
             //Mysql
@@ -333,9 +329,7 @@ namespace CSVtoDatabase
                     return list;
                 }
                 foreach (DataRow row in table.Rows)
-                {
                     list.Add(row[0].ToString());
-                }
             }
             return list;
         }
@@ -368,7 +362,7 @@ namespace CSVtoDatabase
             textBoxLog.Text = msgboxShow.ToString();
             string connectionString = $"server={Server};user id={UserId};password={Password}";
             //$"data source={textBoxServerAddress.Text};user id={UserId};password={textBoxPwd.Text};initial catalog=master";
-            int count = new Helper(ThisSqlConnection).GetRecordCount(SelectDatabaseName,SelectDatatableName );
+            int count = new Helper(_sqlConnection).GetRecordCount(SelectDatabaseName,SelectDatatableName );
             MessageBox.Show(count.ToString());
         }
         /// <summary>
@@ -379,13 +373,11 @@ namespace CSVtoDatabase
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             this._formClosing = true;
-            new DataExporter(ThisSqlConnection).Suspend();
+            new DataExporter(_sqlConnection).Suspend();
             //MessageBox.Show($@"Max:{toolStripProgressBar1.Maximum}---Value:{toolStripProgressBar1.Value}");
             if (toolStripProgressBar1.Maximum != toolStripProgressBar1.Value)
                 if (MessageBox.Show("Are you sure to exit?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
                     e.Cancel = false;
-                }
                 else
                 {
                     _formClosing = false;
@@ -412,7 +404,6 @@ namespace CSVtoDatabase
         private void exitXToolStripMenuItem_Click(object sender, EventArgs e)
         {
            new  DataExporter().Dispose();
-
             Application.Exit();
         }
         //
@@ -427,7 +418,6 @@ namespace CSVtoDatabase
         /// <param name="e"></param>
         private void comboBoxDtList_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
         /// <summary>
         /// Disable the checkbox indicates whether the first line contains column names.
@@ -436,9 +426,7 @@ namespace CSVtoDatabase
         private void DiableChkBox(bool disable)
         {
             if (disable)
-            {
                 checkBoxIgnoreFirstLine.Checked = true;
-            }
             checkBoxIgnoreFirstLine.Enabled = !disable;
         }
 
@@ -462,13 +450,9 @@ namespace CSVtoDatabase
         void SetCheckbox()
         {
             if (!GetDbList().Contains(comboBoxDbList.Text) || !GetDtList().Contains(comboBoxDtList.Text))
-            {
                 DiableChkBox(true);
-            }
             else
-            {
                 DiableChkBox(false);
-            }
         }
         /// <summary>
         /// Enable <remarks>ddd</remarks>
@@ -519,53 +503,65 @@ namespace CSVtoDatabase
         private void btnDisconnect_Click(object sender, EventArgs e)
         {
             //Helper.Dispose();
-            if (ThisSqlConnection == null && ThisMySqlConnection == null)
+            if (_sqlConnection == null && _mySqlConnection == null)
             {
                 textBoxLog.AppendText("No connection.\r\n");
                 return;
             }
-            if (ThisSqlConnection != null && ThisSqlConnection.State != ConnectionState.Closed)
+            else if (_sqlConnection != null && _sqlConnection.State != ConnectionState.Closed)
             {
-                ThisSqlConnection.Dispose();
+                _sqlConnection.Dispose();
                 textBoxLog.AppendText("Connection closed.\r\n");
             }
 
-            if (ThisSqlConnection != null && ThisSqlConnection.State == ConnectionState.Closed)
+           else  if (_sqlConnection != null && _sqlConnection.State == ConnectionState.Closed)
             {
                 textBoxLog.AppendText("Connection has already been closed.\r\n");
             }
 
-            if (ThisMySqlConnection != null && ThisMySqlConnection.State != ConnectionState.Closed)
+           else  if (_mySqlConnection != null && _mySqlConnection.State != ConnectionState.Closed)
             {
-                ThisMySqlConnection.Dispose();
+                _mySqlConnection.Close();
                 textBoxLog.AppendText("Connection closed.\r\n");
             }
 
-            if (ThisMySqlConnection != null && ThisMySqlConnection.State == ConnectionState.Closed)
+           else  if (_mySqlConnection != null && _mySqlConnection.State != ConnectionState.Closed)
             {
                 textBoxLog.AppendText("Connection has already been closed.\r\n");
             }
+
+            comboBoxDbList.DataSource = new List<string>();
+            comboBoxDbList.Text = string.Empty;
+            comboBoxDtList.DataSource = new List<String>();
+            comboBoxDtList.Text = string.Empty;
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Helper.Dispose();
             _dataExporter.Dispose();
+            _dataImporter.Dispose();
         }
 
         private void BtnExport_Click(object sender, EventArgs e)
         {
-            if (ThisSqlConnection == null || ThisSqlConnection.State != ConnectionState.Connecting)
+            if (_sqlConnection == null && _mySqlConnection==null)
             {
-                if (ThisMySqlConnection == null || ThisMySqlConnection.State != ConnectionState.Connecting)
-                {
-                    MessageBox.Show("No server connected.\r\n");
-                    return;
-                }
+                textBoxLog.AppendText("No connection.\r\n");
             }
-            string filePath = "";
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = @"CSV Files|*.csv|All Files|*.*";
+            else if(_sqlConnection!=null&&_sqlConnection.State!=ConnectionState.Open)
+            {
+                textBoxLog.AppendText("Connection not opened.\r\n");
+            }
+            else if(_mySqlConnection!=null&&_mySqlConnection.State!=ConnectionState.Open)
+            {
+                textBoxLog.AppendText("Connection not opened.\r\n");
+            }
+            string filePath;
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = @"CSV Files|*.csv|All Files|*.*"
+            };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 filePath = saveFileDialog.FileName;
@@ -574,7 +570,7 @@ namespace CSVtoDatabase
             {
                 return;
             }
-
+            InitialExporter();
             string dbname = comboBoxDbList.Text;
             string dtname = comboBoxDtList.Text;
             //Task<int> task =Task.Run(()=>//DataExporter.ExportToCsv();
@@ -592,8 +588,8 @@ namespace CSVtoDatabase
         {
             switch (Source)
             {
-                case DataSource.SqlServer: _dataExporter = new DataExporter(ThisSqlConnection);break;
-                 case DataSource.MySql:_dataExporter = new DataExporter(ThisMySqlConnection);break;
+                case DataSource.SqlServer: _dataExporter = new DataExporter(_sqlConnection);break;
+                 case DataSource.MySql:_dataExporter = new DataExporter(_mySqlConnection);break;
             }
         }
 
@@ -601,8 +597,8 @@ namespace CSVtoDatabase
         {
             switch (Source)
             {
-                case DataSource.SqlServer: _dataImporter = new DataImporter(ThisSqlConnection);break;
-                case DataSource.MySql: _dataImporter = new DataImporter(ThisMySqlConnection);break;
+                case DataSource.SqlServer: _dataImporter = new DataImporter(_sqlConnection);break;
+                case DataSource.MySql: _dataImporter = new DataImporter(_mySqlConnection);break;
             }
         }
         private delegate void StartExportDelegate();
@@ -649,7 +645,7 @@ namespace CSVtoDatabase
                 _dataExporter.ThisThread.Suspend();
                 btnPauseExport.Text = @"Resume";
             }
-            else if (_dataExporter.ThisThread.ThreadState != ThreadState.Running)
+            if (_dataImporter._thread.ThreadState == ThreadState.Running)
             {
                 _dataExporter.ThisThread.Resume();
                 btnPauseExport.Text = @"Pause";

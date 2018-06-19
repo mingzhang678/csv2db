@@ -13,15 +13,16 @@ namespace CSVtoDatabase
     public class DataImporter
     {
         private static readonly Form1 mainForm = Program.GetMainForm();
-        private static Thread _thread = null;
-        MySqlConnection _mySqlConnection = null;
-        SqlConnection _sqlConnection;
-        FileStream _fileStream = null;
-        StreamReader _streamReader = null;
+        public Thread _thread { get; set; }
+        private MySqlConnection _mySqlConnection { get; set; }
+        private SqlConnection _sqlConnection { get; set; }
+
+        private FileStream _fileStream { get; set; }
+        private StreamReader _streamReader { get; set; }
 
         public DataImporter()
         {
-
+            
         }
 
         public DataImporter(SqlConnection connection)
@@ -66,7 +67,7 @@ namespace CSVtoDatabase
             int currentLineNumber = 0;
             long lineCount = GetLineCount(_streamReader, false);
             mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
-                new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar), (int)lineCount);
+                new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar), (int)lineCount);
             _streamReader.BaseStream.Position = 0;
             while (!_streamReader.EndOfStream)
             {
@@ -126,12 +127,13 @@ namespace CSVtoDatabase
                     catch (Exception e)
                     {
                         mainForm.textBoxLog.Invoke(
-                            new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                             $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                         var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.OK)
                         {
-
+                            if(dialogResult==DialogResult.Yes)
+                                continue;
                         }
                         else
                         {
@@ -145,7 +147,7 @@ namespace CSVtoDatabase
                 }
             }
             MessageBox.Show($@"Imported {importedRecordCount} record.");
-            _sqlConnection.Dispose();
+            _sqlConnection.Close();
             _streamReader.Dispose();
             _fileStream.Dispose();
             return importedRecordCount;
@@ -157,8 +159,25 @@ namespace CSVtoDatabase
             _thread.Start();
             return 0;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbname"></param>
+        /// <param name="dtname"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="filepath"></param>
+        /// <param name="firstLineColNames"></param>
+        /// <returns></returns>
         public delegate int WriteToSqlServerDelegate(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbname"></param>
+        /// <param name="dtname"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="filepath"></param>
+        /// <param name="firstLineColNames"></param>
+        /// <returns></returns>
         public int WriteToSqlServer(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
         {
             if (!File.Exists(filepath))
@@ -240,7 +259,7 @@ namespace CSVtoDatabase
                         catch (Exception e)
                         {
                             mainForm.textBoxLog.Invoke(
-                                new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText), $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                                new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                             var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                             if (dialogResult == DialogResult.OK)
                             {
@@ -252,9 +271,9 @@ namespace CSVtoDatabase
                             }
                         }
                         mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
-                            new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
+                            new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
                         mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
-                            new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar),
+                            new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
                             currentLineNumber);
                         insertCommand.Dispose();
                         importedRecordCount++;
@@ -287,7 +306,7 @@ namespace CSVtoDatabase
                     catch (Exception e)
                     {
                         mainForm.textBoxLog.Invoke(
-                            new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                             $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                         var dialogResult = MessageBox.Show(@"Continue ?", "", buttons: MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.OK)
@@ -300,9 +319,9 @@ namespace CSVtoDatabase
                         }
                     }
                     mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
-                        new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
+                        new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
                     mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
-                        new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar),
+                        new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
                         currentLineNumber);
                     insertCommand.Dispose();
                     importedRecordCount++;
@@ -315,7 +334,7 @@ namespace CSVtoDatabase
             return importedRecordCount;
         }
 
-        public static List<string> GetSplitedStrings(string text)
+        public List<string> GetSplitedStrings(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return null;
@@ -598,11 +617,11 @@ namespace CSVtoDatabase
                         string createDtCommandString = $"USE {dbname} ; CREATE TABLE IF NOT EXISTS {dtname}({fields});";
                         MySqlCommand createDbCommand = new MySqlCommand(createDbCommandString, _mySqlConnection);
                         mainForm.textBoxLog.Invoke(
-                            new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                             $"Executed {createDbCommandString} successfully.\r\n");
                         MySqlCommand createDtCommand = new MySqlCommand(createDtCommandString, _mySqlConnection);
                         mainForm.textBoxLog.Invoke(
-                            new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                             $"Executed {createDbCommandString} successfully.\r\n");
                         createDbCommand.ExecuteNonQuery();
                         createDtCommand.ExecuteNonQuery();
@@ -636,7 +655,7 @@ namespace CSVtoDatabase
                         {
                             Program.GetMainForm().GettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                             mainForm.textBoxLog.Invoke(
-                                new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
+                                new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                                 $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                             var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                             if (dialogResult == DialogResult.OK)
@@ -646,9 +665,9 @@ namespace CSVtoDatabase
                             break;
                         }
                         mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
-                            new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
+                            new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
                         mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
-                            new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar),
+                            new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
                             currentLineNumber);
                         insertCommand.Dispose();
                         importedRecordCount++;
@@ -676,13 +695,13 @@ namespace CSVtoDatabase
                     try
                     {
                         mainForm.textBoxLog.Invoke(
-                            new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText), $"Execute {insertCommandString}.\r\n");
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"Execute {insertCommandString}.\r\n");
                         insertCommand.ExecuteNonQueryAsync();
                     }
                     catch (Exception e)
                     {
                         mainForm.textBoxLog.Invoke(
-                            new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText),
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                             $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
                         var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
@@ -692,10 +711,10 @@ namespace CSVtoDatabase
                         break;
                     }
                     mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
-                        new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText),
+                        new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText),
                         $@"Progress : {currentLineNumber}/{lineCount}");
                     mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
-                        new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar),
+                        new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
                         currentLineNumber);
                     insertCommand.Dispose();
                     importedRecordCount++;
@@ -706,6 +725,16 @@ namespace CSVtoDatabase
             streamReader.Dispose();
             fileStream.Dispose();
             return importedRecordCount;
+        }
+
+        public void Suspend()
+        {
+            _thread.Suspend();
+        }
+
+        public void Resume()
+        {
+            _thread.Resume();
         }
         internal void Dispose()
         {

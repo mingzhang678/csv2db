@@ -24,13 +24,13 @@ namespace CSVtoDatabase
         internal delegate void appendTextBoxTextDelegate(string text);
 
         internal delegate void setProgressBarMaxDelegate(int value);
-        internal static void setStatusLabelText(string text)
+        internal static void SetStatusLabelText(string text)
         {
             mainForm.toolStripStatusLabel1.Text = text;
             return;
         }
 
-        internal static void setProgressBar(int value)
+        internal static void SetProgressBar(int value)
         {
             mainForm.toolStripProgressBar1.Value = value;
             return;
@@ -40,7 +40,7 @@ namespace CSVtoDatabase
         {
             mainForm.toolStripProgressBar1.Maximum = value;
         }
-        internal static void appendTextBoxText(string text)
+        internal static void AppendTextBoxText(string text)
         {
             mainForm.textBoxLog.AppendText(text);
         }

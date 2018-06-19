@@ -12,7 +12,7 @@ using MySql.Data.MySqlClient;
 
 namespace CSVtoDatabase
 {
-   public  class DataExporter
+    public class DataExporter
     {
         private readonly Form1 MainForm = Program.GetMainForm();
         private SqlConnection ThisSqlConnection;
@@ -190,7 +190,7 @@ namespace CSVtoDatabase
         {
             int exportedCount = 0;
             string lineString = "";
-            writer.WriteLine(lineString);
+            //writer.WriteLine(lineString);
             foreach (DataRow row in table.Rows)
             {
                 lineString = "";
@@ -205,12 +205,11 @@ namespace CSVtoDatabase
                 }
                 writer.WriteLine(lineString);
                 exportedCount++;
-                MainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(new OperateControls.setStatusLabelTextDelegate(OperateControls.setStatusLabelText), $"{exportedCount} / {recordCount}");
-                MainForm.toolStripProgressBar1.GetCurrentParent().Invoke(new OperateControls.setProgressBarValueDelegate(OperateControls.setProgressBar), exportedCount);
+                MainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $"{exportedCount} / {recordCount}");
+                MainForm.toolStripProgressBar1.GetCurrentParent().Invoke(new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar), exportedCount);
                 if (recordCount == exportedCount)
                 {
-                    MainForm.textBoxLog.Invoke(new OperateControls.appendTextBoxTextDelegate(OperateControls.appendTextBoxText), $"Exported {exportedCount} records.\r\n");
-                    //fileStream.Dispose();
+                    MainForm.textBoxLog.Invoke(new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"Exported {exportedCount} records.\r\n");
                     Dispose();
                 }
             }
@@ -291,7 +290,8 @@ namespace CSVtoDatabase
                         queryString = $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
                         //try
                         //{
-                        ThisSqlConnection.Open();
+                        if (ThisSqlConnection.State == ConnectionState.Closed)
+                            ThisSqlConnection.Open();
                         //}
                         //catch (Exception e)
                         //{
@@ -306,7 +306,8 @@ namespace CSVtoDatabase
                 case DataSource.MySql:
                     {
                         queryString = $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
-                        ThisMySqlConnection.Open();
+                        if (ThisMySqlConnection.State == ConnectionState.Closed)
+                            ThisMySqlConnection.Open();
                         MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                         adapter.Fill(table);
@@ -331,38 +332,38 @@ namespace CSVtoDatabase
             switch (source)
             {
                 case DataSource.SqlServer:
-                {
+                    {
 
-                    queryString =
-                        $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
-                    ThisSqlConnection = new SqlConnection(connectionString);
-                    //try
-                    //{
-                    ThisSqlConnection.Open();
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //}
-                    SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    adapter.Fill(table);
-                    command.Dispose();
-                    adapter.Dispose();
-                }
+                        queryString =
+                            $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
+                        ThisSqlConnection = new SqlConnection(connectionString);
+                        //try
+                        //{
+                        ThisSqlConnection.Open();
+                        //}
+                        //catch (Exception e)
+                        //{
+                        //}
+                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+                        adapter.Fill(table);
+                        command.Dispose();
+                        adapter.Dispose();
+                    }
                     ;
                     break;
                 case DataSource.MySql:
-                {
-                    queryString =
-                        $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
-                    ThisMySqlConnection = new MySqlConnection(connectionString);
-                    ThisMySqlConnection.Open();
-                    MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
-                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
-                    adapter.Fill(table);
-                    command.Dispose();
-                    adapter.Dispose();
-                }
+                    {
+                        queryString =
+                            $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
+                        ThisMySqlConnection = new MySqlConnection(connectionString);
+                        ThisMySqlConnection.Open();
+                        MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                        adapter.Fill(table);
+                        command.Dispose();
+                        adapter.Dispose();
+                    }
                     break;
             }
 
@@ -371,7 +372,7 @@ namespace CSVtoDatabase
             return list;
         }
 
-        public int GetRecordCount(string dbname, string dtname,DataSource source)
+        public int GetRecordCount(string dbname, string dtname, DataSource source)
         {
             string queryString = $"USE {dbname};SELECT COUNT(*) as 'totalcount' FROM {dtname}";
             object count = 0;
@@ -379,7 +380,8 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        ThisSqlConnection.Open();
+                        if (ThisSqlConnection.State == ConnectionState.Closed)
+                            ThisSqlConnection.Open();
                         SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable table = new DataTable();
@@ -389,7 +391,8 @@ namespace CSVtoDatabase
                     break;
                 case DataSource.MySql:
                     {
-                        ThisMySqlConnection.Open();
+                        if (ThisMySqlConnection.State == ConnectionState.Closed)
+                            ThisMySqlConnection.Open();
                         MySqlCommand commmand = new MySqlCommand(queryString, ThisMySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(commmand);
                         DataTable table = new DataTable();
@@ -401,7 +404,7 @@ namespace CSVtoDatabase
             return Convert.ToInt32(count);
         }
 
- /// <summary>
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="dbname"></param>
@@ -445,7 +448,7 @@ namespace CSVtoDatabase
 
         public void Resume()
         {
-            this.ThisThread.Resume();
+            ThisThread.Resume();
         }
         ~DataExporter()
         {
