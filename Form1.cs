@@ -28,10 +28,11 @@ namespace CSVtoDatabase
         public string UserFolder { get; set; } = Environment.GetEnvironmentVariable("USERPROFILE");
         //private OnClosingDialog onClosingDialog;
         private string _safeFileName = string.Empty;
-        internal DataExporter _dataExporter;
+        internal DataExporter _dataExporter { get; set; }
         internal DataImporter _dataImporter;
         private SqlConnection _sqlConnection { get; set; }
         private MySqlConnection _mySqlConnection { get; set; }
+        private Thread _thread { get; set; }
 
         public Form1()
         {
@@ -121,6 +122,7 @@ namespace CSVtoDatabase
         }
         private void btnImport_Click(object sender, EventArgs e)
         {
+            InitialImporter();
             if (!_connected)
             {
                 MessageBox.Show(@"Please connect to database server.");
@@ -135,22 +137,22 @@ namespace CSVtoDatabase
             }
             string dbname = comboBoxDbList.Text == string.Empty ? "csv2db" : comboBoxDbList.Text;
             string dtname = comboBoxDtList.Text == string.Empty ? "tb_from_csv" : comboBoxDtList.Text;
-            string connectionString = "";
+            //string connectionString = "";
             switch (listBoxDatabase.SelectedIndex)
             {
                 case 0:
                     {
-                        connectionString = checkBoxIntegratedSecurity.Checked
-                            ? $"Data Source={Server};Initial Catalog=master;Persist Security Info=True;Integrated Security=True"
-                            : $"Data Source={Server};Initial Catalog=master;Persist Security Info=True;User ID={UserId};Password={textBoxPwd.Text}";
-                        _dataImporter.ImportToSqlServer(dbname, dtname, connectionString, textBoxFilePath.Text, checkBoxIgnoreFirstLine.Checked);
+                        //connectionString = checkBoxIntegratedSecurity.Checked
+                        //    ? $"Data Source={Server};Initial Catalog=master;Persist Security Info=True;Integrated Security=True"
+                        //    : $"Data Source={Server};Initial Catalog=master;Persist Security Info=True;User ID={UserId};Password={textBoxPwd.Text}";
+                        _dataImporter.ImportToSqlServer(dbname, dtname, textBoxFilePath.Text, checkBoxIgnoreFirstLine.Checked);
                     }
                     break;
                 case 1:
                     {
-                        connectionString = $"server={Server};user id={UserId};Password={textBoxPwd.Text};database=mysql";
+                        //connectionString = $"server={Server};user id={UserId};Password={textBoxPwd.Text};database=mysql";
                         //DataImporter.ImportToMySqlAsync(dbname, dtname, connectionString, textBoxFilePath.Text, null, true);
-                        _dataImporter.ImportToMySql(dbname, dtname, connectionString, textBoxFilePath.Text,
+                        _dataImporter.ImportToMySql(dbname, dtname, textBoxFilePath.Text,
                             checkBoxIgnoreFirstLine.Checked);
                     }
                     break;
@@ -162,8 +164,11 @@ namespace CSVtoDatabase
             int selected = listBoxDatabase.SelectedIndex;
             switch (selected)
             {
-                case 0: EnableIntegratedSecurityChkbox(true); break;
-                default: EnableIntegratedSecurityChkbox(false); break;
+                case 0:
+                    EnableIntegratedSecurityChkbox(true);
+                    textBoxUId.Text = "sa"; break;
+                default: EnableIntegratedSecurityChkbox(false);
+                    textBoxUId.Text = "root"; break;
             }
             _connected = false;
             //setDbList();
@@ -263,14 +268,14 @@ namespace CSVtoDatabase
             {
                 try
                 {
+                    _mySqlConnection = new MySqlConnection($"server=localhost;user id={UserId};persistsecurityinfo=True;database=mysql;password={Password}");
                     //Get list of database
-                    table = new Helper().QueryMySql("show databases;",
-                        $"server=localhost;user id={UserId};persistsecurityinfo=True;database=mysql;password={textBoxPwd.Text}");
+                    table = new Helper(_mySqlConnection).QueryMySql("show databases;");
                     _connected = true;
                 }
                 catch (Exception e)
                 {
-                    textBoxLog.AppendText(e.StackTrace + "\r\n");
+                    textBoxLog.AppendText(e.Message + "\r\n");
                     return list;
                 }
                 foreach (DataRow row in table.Rows)
@@ -539,12 +544,13 @@ namespace CSVtoDatabase
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Helper.Dispose();
-            _dataExporter.Dispose();
-            _dataImporter.Dispose();
+            _dataExporter?.Dispose();
+            _dataImporter?.Dispose();
         }
 
         private void BtnExport_Click(object sender, EventArgs e)
         {
+            string filePath;
             if (_sqlConnection == null && _mySqlConnection==null)
             {
                 textBoxLog.AppendText("No connection.\r\n");
@@ -557,7 +563,6 @@ namespace CSVtoDatabase
             {
                 textBoxLog.AppendText("Connection not opened.\r\n");
             }
-            string filePath;
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = @"CSV Files|*.csv|All Files|*.*"
@@ -640,22 +645,24 @@ namespace CSVtoDatabase
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (_dataExporter.ThisThread.ThreadState != ThreadState.Suspended)
+            if (_dataExporter._thread != null && _dataExporter._thread.ThreadState == ThreadState.Running)
             {
-                _dataExporter.ThisThread.Suspend();
-                btnPauseExport.Text = @"Resume";
+                _dataExporter._thread.Suspend();
+                btnPauseExport.Text = @"Paused.
+";
             }
-            if (_dataImporter._thread.ThreadState == ThreadState.Running)
+            if (_dataImporter._thread != null && _dataImporter._thread.ThreadState == ThreadState.Running)
             {
-                _dataExporter.ThisThread.Resume();
-                btnPauseExport.Text = @"Pause";
+                _dataExporter._thread.Suspend();
+                btnPauseExport.Text = @"Paused.
+";
             }
-            MessageBox.Show(_dataExporter.ThisThread.ThreadState.ToString());
+            MessageBox.Show(_dataExporter._thread.ThreadState.ToString());
         }
 
         private void btnStopExport_Click(object sender, EventArgs e)
         {
-            _dataExporter.ThisThread.Abort();
+            _dataExporter._thread.Abort();
             _dataExporter.Dispose();
         }
 
@@ -664,6 +671,10 @@ namespace CSVtoDatabase
 
         }
 
+        public void Suspend()
+        {
+            
+        }
         internal string UserId => textBoxUId.Text;
         internal string Password => textBoxPwd.Text;
         internal string Server => textBoxServer.Text;
@@ -683,6 +694,32 @@ namespace CSVtoDatabase
                     default: return DataSource.SqlServer;
                 }
             }
+        }
+
+        private void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            MessageBox.Show("YEP");
+        }
+
+        private void textBoxFilePath_DragOver(object sender, DragEventArgs e)
+        {
+            MessageBox.Show("Dropped.");
+        }
+
+        private void textBoxFilePath_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+
+        private void Form1_DragEnter_1(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void textBoxFilePath_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            textBoxFilePath.Text = files[0];
         }
     }
 }

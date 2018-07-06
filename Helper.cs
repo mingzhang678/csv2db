@@ -17,8 +17,8 @@ namespace CSVtoDatabase
     public class Helper
     {
         private static String _connectionString;// = "Data Source=.;Initial Catalog=master;Integrated Security=True"; //ConfigurationManager.ConnectionStrings["DBmaster"].ConnectionString;
-        public static SqlConnection SqlConnection { get; set; }
-        public static MySqlConnection MySqlConnection { get; set; }
+        public static SqlConnection _sqlConnection { get; set; }
+        public static MySqlConnection _mySqlConnection { get; set; }
 
         public Helper()
         {
@@ -31,22 +31,22 @@ namespace CSVtoDatabase
 
         public Helper(SqlConnection connection)
         {
-            SqlConnection = connection;
+            _sqlConnection = connection;
         }
 
         public Helper(MySqlConnection connection)
         {
-            MySqlConnection = connection;
+            _mySqlConnection = connection;
         }
         public DataTable QuerySqlServer(string str)
         {
             //sqlConnection = new SqlConnection(_connectionString);
-            SqlCommand command = new SqlCommand(str, SqlConnection);
+            SqlCommand command = new SqlCommand(str, _sqlConnection);
             // try
             //{
-            if (SqlConnection != null)
-                if (SqlConnection.State == ConnectionState.Closed)
-                    SqlConnection.Open();
+            if (_sqlConnection != null)
+                if (_sqlConnection.State == ConnectionState.Closed)
+                    _sqlConnection.Open();
             //}
             // catch (Exception e)
             //{
@@ -62,12 +62,12 @@ namespace CSVtoDatabase
 
         public DataTable QuerySqlServer(string queryString, string connectionString)
         {
-            SqlConnection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand(queryString, SqlConnection);
-            if (SqlConnection != null && SqlConnection.State == ConnectionState.Closed)
+            _sqlConnection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand(queryString, _sqlConnection);
+            if (_sqlConnection != null && _sqlConnection.State == ConnectionState.Closed)
                 //try
                 //{
-                    SqlConnection.Open();
+                    _sqlConnection.Open();
                 //}
                 //catch (Exception e)
                 //{
@@ -97,12 +97,12 @@ namespace CSVtoDatabase
         /// <returns></returns>
         public DataTable QueryMySql(string queryString, string connectionString)
         {
-            MySqlConnection = new MySqlConnection(connectionString);
-            MySqlCommand command = new MySqlCommand(queryString, MySqlConnection);
+            _mySqlConnection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand(queryString, _mySqlConnection);
             //try
            // {
 
-                MySqlConnection.Open();
+                _mySqlConnection.Open();
             //}
             //catch (Exception e)
             //{
@@ -116,9 +116,11 @@ namespace CSVtoDatabase
         }
         public DataTable QueryMySql(string str)
         {
-            MySqlConnection = new MySqlConnection(_connectionString);
-            MySqlCommand command = new MySqlCommand(str, MySqlConnection);
-            MySqlConnection.Open();
+            if(_mySqlConnection==null)
+                _mySqlConnection = new MySqlConnection(_connectionString);
+            MySqlCommand command = new MySqlCommand(str, _mySqlConnection);
+            if(_mySqlConnection.State==ConnectionState.Closed)
+                _mySqlConnection.Open();
             MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             sqlDataAdapter.Fill(table);
@@ -127,9 +129,9 @@ namespace CSVtoDatabase
         }
         public static DataTable QueryMySqlAsync(string str)
         {
-            MySqlConnection = new MySqlConnection(_connectionString);
-            MySqlCommand command = new MySqlCommand(str, MySqlConnection);
-            MySqlConnection.Open();
+            _mySqlConnection = new MySqlConnection(_connectionString);
+            MySqlCommand command = new MySqlCommand(str, _mySqlConnection);
+            _mySqlConnection.Open();
             MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             sqlDataAdapter.Fill(table);
@@ -145,23 +147,23 @@ namespace CSVtoDatabase
         /// </summary>
         public static void Dispose()
         {
-            if (SqlConnection != null)
+            if (_sqlConnection != null)
             {
-                SqlConnection.Dispose();
-                SqlConnection = null;
+                _sqlConnection.Dispose();
+                _sqlConnection = null;
             }
 
-            if (MySqlConnection != null)
+            if (_mySqlConnection != null)
             {
-                MySqlConnection.Dispose();
-                MySqlConnection = null;
+                _mySqlConnection.Dispose();
+                _mySqlConnection = null;
             }
         }
 
         public int GetRecordCount(string dbname, string dtname)
         {
             string queryString = $"use {dbname};select count(*) as 'totalcount' from {dtname};";
-            MySqlCommand command = new MySqlCommand(queryString, MySqlConnection);
+            MySqlCommand command = new MySqlCommand(queryString, _mySqlConnection);
             MySqlDataAdapter adapter = new MySqlDataAdapter(command);
             DataTable table = new DataTable();
             adapter.Fill(table);

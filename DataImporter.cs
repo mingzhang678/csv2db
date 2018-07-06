@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -44,6 +46,10 @@ namespace CSVtoDatabase
         /// <returns></returns>
         public async Task<int> WriteToSqlServer(string dbname, string dtname, string filepath, ControlSet controlSet, bool firstLineColNames)
         {
+
+            FileStream fileStream = new FileStream("C:\\File.sql", FileMode.Create);
+            StreamWriter writer = new StreamWriter(fileStream, Encoding.ASCII);
+
             if (string.IsNullOrWhiteSpace(filepath))
                 return -1;
             string connectionString = @"Data Source=.;Initial Catalog=master;Integrated Security=True";//ConfigurationManager.ConnectionStrings["DBmaster"].ConnectionString;
@@ -51,6 +57,7 @@ namespace CSVtoDatabase
             _fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
             _streamReader = new StreamReader(_fileStream);
             int importedRecordCount = 0;
+            string insertCommandString;// = $"USE {dtname};\r\n";
             if (!File.Exists(filepath))
             {
                 MessageBox.Show($@"File {filepath} no found.");
@@ -118,7 +125,9 @@ namespace CSVtoDatabase
                             valueString += $"'{str2}',";
                         }
                     }
-                    string insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
+                    insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
+                    writer.WriteLine(insertCommandString);
+                    /**
                     SqlCommand insertCommand = new SqlCommand(insertCommandString, _sqlConnection);
                     try
                     {
@@ -140,17 +149,25 @@ namespace CSVtoDatabase
                             break;
                         }
                     }
+                    */
                     controlSet.toolStripStatusLabeL.Text = $@"Progress : {currentLineNumber}/{lineCount}";
                     controlSet.toolStripProgressBar.Value = currentLineNumber;
-                    insertCommand.Dispose();
+                   // insertCommand.Dispose();
                     importedRecordCount++;
                 }
             }
+            
             MessageBox.Show($@"Imported {importedRecordCount} record.");
             _sqlConnection.Close();
             _streamReader.Dispose();
             _fileStream.Dispose();
             return importedRecordCount;
+        }
+        public int ImportToSqlServer(string dbname, string dtname, string filepath, bool firstLineColNames)
+        {
+            _thread = new Thread(() => WriteToSqlServer(dbname, dtname, filepath, firstLineColNames));
+            _thread.Start();
+            return 0;
         }
 
         public int ImportToSqlServer(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
@@ -169,6 +186,182 @@ namespace CSVtoDatabase
         /// <param name="firstLineColNames"></param>
         /// <returns></returns>
         public delegate int WriteToSqlServerDelegate(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames);
+        public int WriteToSqlServer(string dbname, string dtname, string filepath, bool firstLineColNames)
+        {
+            string insertCommandString = "";
+            //FileStream fileStream = new FileStream(filepath, FileMode.Open);
+            //StreamWriter writer = new StreamWriter(fileStream);
+
+            if (!File.Exists(filepath))
+            {
+                mainForm.textBoxLog.AppendText($"File not found:{filepath}.\r\n");
+                return -1;
+            }
+            if (string.IsNullOrWhiteSpace(filepath))
+                return -1;
+            _fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            _streamReader = new StreamReader(_fileStream);
+            int importedRecordCount = 0;
+            if (!File.Exists(filepath))
+            {
+                MessageBox.Show($@"File {filepath} no found.");
+                return 0;
+            }
+            try
+            {
+                if(_sqlConnection.State!=ConnectionState.Open)
+                _sqlConnection.Open();
+            }
+            catch (Exception e)
+            {
+                mainForm.textBoxLog.Invoke(
+                    new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
+                    $"{e.Message}\r\n");
+            }
+            //Current Line Number
+            int currentLineNumber = 0;
+            //Get count of all lines
+            long lineCount = GetLineCount(_streamReader, false);
+            mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
+                new OperateControls.setProgressBarMaxDelegate(OperateControls.SetProgressBarMax), (int)lineCount);
+            _streamReader.BaseStream.Position = 0;
+            while (!_streamReader.EndOfStream)
+            {
+                currentLineNumber++;
+                string str = _streamReader.ReadLine();
+                List<string> splited = GetSplitedStrings(str);
+                if (splited == null)
+                {
+                    continue;
+                }
+                if (currentLineNumber == 1)
+                {
+                    if (firstLineColNames)
+                    {
+                        string fields = "";
+                        for (int i = 0; i < splited.Count; i++)
+                        {
+                            fields += $"[{splited[i]}] varchar(255) null,";
+                        }
+                        insertCommandString = $"IF(DB_ID('{dbname}') IS NULL) CREATE DATABASE [{dbname}];\r\nIF NOT EXISTS(SELECT [NAME] FROM SYS.TABLES WHERE [NAME] = '{dtname}') CREATE TABLE [{dtname}]({fields});";
+                        //writer.WriteLine(insertCommandString);
+                        string createDbCommandString = $"IF(DB_ID('{dbname}') IS NULL) CREATE DATABASE [{dbname}];";
+                        string createDtCommandString = $"USE {dbname}; IF NOT EXISTS(SELECT [NAME] FROM SYS.TABLES WHERE [NAME] = '{dtname}') CREATE TABLE [{dtname}]({fields});";
+
+                        
+                        SqlCommand createDbCommand = new SqlCommand(createDbCommandString, _sqlConnection);
+                        SqlCommand createDtCommand = new SqlCommand(createDtCommandString, _sqlConnection);
+                        //createDbCommand.ExecuteNonQuery();
+                        //createDtCommand.ExecuteNonQuery();
+                        createDtCommand.Dispose();
+                        createDbCommand.Dispose();
+                    }
+                    else
+                    {
+                        
+                        string valueString = "";
+                        for (int i = 0; i < splited.Count; i++)
+                        {
+                            if (i == splited.Count - 1)
+                            {
+                                valueString += $"'{splited[i]}'";
+                                break;
+                            }
+                            string str2;
+                            str2 = splited[i].Contains("'") ? splited[i].Replace("'", "''") : splited[i];
+                            valueString += $"'{str2}',";
+                        }
+                        insertCommandString += $"USE {dbname};INSERT INTO [{dtname}] VALUES({valueString});";
+                        //writer.WriteLine(insertCommandString);
+                        SqlCommand insertCommand = new SqlCommand(insertCommandString, _sqlConnection);
+                        try
+                        {
+                            insertCommand.ExecuteNonQueryAsync();
+                            mainForm.textBoxLog.Invoke(
+                                new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"Excuted {insertCommandString}.\r\n");
+                        }
+                        catch (Exception e)
+                        {
+                            mainForm.textBoxLog.Invoke(
+                                new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                            var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
+                            if (dialogResult == DialogResult.OK)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
+                            new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
+                        mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
+                            new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
+                            currentLineNumber);
+                        //insertCommand.Dispose();
+                        importedRecordCount++;
+                    }
+
+                }
+                else
+                {
+                    string valueString = "";
+                    for (int i = 0; i < splited.Count; i++)
+                    {
+                        if (i == splited.Count - 1)
+                        {
+                            valueString += $"'{splited[i]}'";
+                            break;
+                        }
+                        string str2;
+                        if (splited[i].Contains("'"))
+                            str2 = splited[i].Replace("'", "''");
+                        else
+                            str2 = splited[i];
+                        valueString += $"'{str2}',";
+                    }
+                    insertCommandString = $"USE {dbname};INSERT INTO [{dtname}] VALUES({valueString});";
+                    //writer.WriteLine(insertCommandString);
+                    SqlCommand insertCommand = new SqlCommand(insertCommandString, _sqlConnection);
+                    try
+                    {
+                        insertCommand.ExecuteNonQuery();
+                        mainForm.textBoxLog.Invoke(
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"Excuted {insertCommandString}.\r\n");
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(e.Message);
+                        mainForm.textBoxLog.Invoke(
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
+                            $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                        var dialogResult = MessageBox.Show(@"Continue ?", "", buttons: MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.OK)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
+                        new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
+                    mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
+                        new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
+                        currentLineNumber);
+                    insertCommand.Dispose();
+                    importedRecordCount++;
+                }
+            }
+            MessageBox.Show($@"Imported {importedRecordCount} record.");
+            _sqlConnection.Dispose();
+            _streamReader.Dispose();
+            _fileStream.Dispose();
+            return importedRecordCount;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -562,6 +755,14 @@ namespace CSVtoDatabase
             //thread = new Thread(()=>ImportToMySql());
             return 0;
         }
+        public int ImportToMySql(string dbname, string dtname, string filepath, bool firstLineColName)
+        {
+            _thread = new Thread(() =>
+                ImportToMySqlThread(dbname, dtname, filepath, firstLineColName));
+            _thread.Start();
+            return 0;
+        }
+
         public int ImportToMySql(string dbname, string dtname, string connectionString, string filepath, bool firstLineColName)
         {
             _thread = new Thread(() =>
@@ -570,6 +771,162 @@ namespace CSVtoDatabase
             return 0;
         }
         public delegate int ImpportToMySqlDelegate(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames);
+        public int ImportToMySqlThread(string dbname, string dtname, string filepath, bool firstLineColNames)
+        {
+            if (string.IsNullOrWhiteSpace(filepath))
+                return -1;
+            FileStream fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+
+            StreamReader streamReader = new StreamReader(fileStream);
+            int importedRecordCount = 0;
+            if (!File.Exists(filepath))
+            {
+                MessageBox.Show($@"File {filepath} no found.");
+                return 0;
+            }
+            _mySqlConnection.Open();
+            int currentLineNumber = 0;
+            long lineCount = GetLineCount(streamReader, false);
+            mainForm.toolStripProgressBar1.GetCurrentParent()
+                .Invoke(new OperateControls.setProgressBarMaxDelegate(OperateControls.SetProgressBarMax), (int)lineCount);
+            streamReader.BaseStream.Position = 0;
+            while (!streamReader.EndOfStream)
+            {
+                currentLineNumber++;
+                string str = streamReader.ReadLine();
+                List<string> splited = GetSplitedStrings(str);
+                if (splited == null)
+                {
+                    continue;
+                }
+                // When current line number is 1
+                if (currentLineNumber == 1)
+                {
+                    // If the first line contains column name
+                    if (firstLineColNames)
+                    {
+                        string fields = "";
+                        for (int i = 0; i < splited.Count; i++)
+                        {
+                            if (i == splited.Count - 1)
+                                fields += $"`{splited[i]}` varchar(255) null";
+                            else
+                                fields += $"`{splited[i]}` varchar(255) null,";
+                        }
+                        string createDbCommandString = $"CREATE DATABASE IF NOT EXISTS {dbname};";
+                        string createDtCommandString = $"USE {dbname} ; CREATE TABLE IF NOT EXISTS {dtname}({fields});";
+                        MySqlCommand createDbCommand = new MySqlCommand(createDbCommandString, _mySqlConnection);
+                        mainForm.textBoxLog.Invoke(
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
+                            $"Executed {createDbCommandString} successfully.\r\n");
+                        MySqlCommand createDtCommand = new MySqlCommand(createDtCommandString, _mySqlConnection);
+                        mainForm.textBoxLog.Invoke(
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
+                            $"Executed {createDbCommandString} successfully.\r\n");
+                        createDbCommand.ExecuteNonQuery();
+                        createDtCommand.ExecuteNonQuery();
+                        createDtCommand.Dispose();
+                        createDbCommand.Dispose();
+                    }
+                    else
+                    {
+                        string valueString = "";
+                        for (int i = 0; i < splited.Count; i++)
+                        {
+                            if (i == splited.Count - 1)
+                            {
+                                valueString += $"'{splited[i]}'";
+                                break;
+                            }
+                            string str2;
+                            if (splited[i].Contains("'"))
+                                str2 = splited[i].Replace("'", "''");
+                            else
+                                str2 = splited[i];
+                            valueString += $"'{str2}',";
+                        }
+                        string insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
+                        MySqlCommand insertCommand = new MySqlCommand(insertCommandString, _mySqlConnection);
+                        try
+                        {
+                            insertCommand.ExecuteNonQueryAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            Program.GetMainForm().GettextBoxLog().AppendText($"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                            mainForm.textBoxLog.Invoke(
+                                new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
+                                $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                            var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
+                            if (dialogResult == DialogResult.OK)
+                            {
+                                continue;
+                            }
+                            break;
+                        }
+                        mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
+                            new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText), $@"Progress : {currentLineNumber}/{lineCount}");
+                        mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
+                            new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
+                            currentLineNumber);
+                        insertCommand.Dispose();
+                        importedRecordCount++;
+                    }
+                }
+                else
+                {
+                    string valueString = "";
+                    for (int i = 0; i < splited.Count; i++)
+                    {
+                        if (i == splited.Count - 1)
+                        {
+                            valueString += $"'{splited[i]}'";
+                            break;
+                        }
+                            string str2;
+                            if (splited[i].Contains("'"))
+                                str2 = splited[i].Replace("'", "''");
+                            else
+                                str2 = splited[i];
+                            valueString += $"'{str2}',";
+                    }
+                    string insertCommandString = $"USE {dbname};INSERT INTO {dtname} VALUES({valueString});";
+                    MySqlCommand insertCommand = new MySqlCommand(insertCommandString, _mySqlConnection);
+                    try
+                    {
+                        mainForm.textBoxLog.Invoke(
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText), $"Execute {insertCommandString}.\r\n");
+                        insertCommand.ExecuteNonQueryAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        mainForm.textBoxLog.Invoke(
+                            new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
+                            $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
+                        var dialogResult = MessageBox.Show(@"Continue ?", "", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            continue;
+                        }
+                        break;
+                    }
+                    mainForm.toolStripStatusLabel1.GetCurrentParent().Invoke(
+                        new OperateControls.setStatusLabelTextDelegate(OperateControls.SetStatusLabelText),
+                        $@"Progress : {currentLineNumber}/{lineCount}");
+                    mainForm.toolStripProgressBar1.GetCurrentParent().Invoke(
+                        new OperateControls.setProgressBarValueDelegate(OperateControls.SetProgressBar),
+                        currentLineNumber);
+                    insertCommand.Dispose();
+                    importedRecordCount++;
+                }
+            }
+            MessageBox.Show($@"Imported {importedRecordCount} record.");
+            _mySqlConnection.Dispose();
+            streamReader.Dispose();
+            fileStream.Dispose();
+            return importedRecordCount;
+        }
+
         public int ImportToMySqlThread(string dbname, string dtname, string connectionString, string filepath, bool firstLineColNames)
         {
             if (string.IsNullOrWhiteSpace(filepath))

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\mingz\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_CSVtoDatabase.1121242232.00" t="ExcludeRecursive" />
+    <e p="C:\Users\mingz\Desktop\Git\csv2db" t="IncludeRecursive">
+      <e p="AboutBox.cs" t="Include" />
+      <e p="AboutBox.Designer.cs" t="Include" />
+      <e p="AboutBox.resx" t="Include" />
+      <e p="App.config" t="Include" />
+      <e p="app.manifest" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="ControlSet.cs" t="Include" />
+      <e p="CSVtoDatabase.csproj" t="IncludeRecursive" />
+      <e p="CSVtoDatabase.sln" t="IncludeFlat" />
+      <e p="DataExporter.cs" t="Include" />
+      <e p="DataImporter.cs" t="Include" />
+      <e p="DataSource.cs" t="Include" />
+      <e p="docs" t="Include">
+        <e p="MySqlCommand.xml" t="Include" />
+        <e p="MySqlCommandBuilder.xml" t="Include" />
+        <e p="MySqlConnection.xml" t="Include" />
+        <e p="MySqlConnectionStringBuilder.xml" t="Include" />
+        <e p="MySqlDataAdapter.xml" t="Include" />
+        <e p="MySqlDataReader.xml" t="Include" />
+        <e p="MySqlException.xml" t="Include" />
+        <e p="MySqlHelper.xml" t="Include" />
+        <e p="MySqlParameter.xml" t="Include" />
+        <e p="MySqlParameterCollection.xml" t="Include" />
+        <e p="MySqlTransaction.xml" t="Include" />
+      </e>
+      <e p="Form1.cs" t="Include" />
+      <e p="Form1.Designer.cs" t="Include" />
+      <e p="Form1.resx" t="Include" />
+      <e p="Helper.cs" t="Include" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="OnClosingDialog.cs" t="Include" />
+      <e p="OnClosingDialog.Designer.cs" t="Include" />
+      <e p="OnClosingDialog.resx" t="Include" />
+      <e p="OperateControls.cs" t="Include" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+        <e p="Resources.Designer.cs" t="Include" />
+        <e p="Resources.resx" t="Include" />
+        <e p="Settings.Designer.cs" t="Include" />
+        <e p="Settings.settings" t="Include" />
+      </e>
+    </e>
+    <e p="C:\Users\mingz\Desktop\Git\JDivider" t="IncludeRecursive">
+      <e p="App.config" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Divider.cs" t="Include" />
+      <e p="Form1.cs" t="Include" />
+      <e p="Form1.Designer.cs" t="Include" />
+      <e p="Form1.resx" t="Include" />
+      <e p="JDivider.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+    </e>
+    <e p="C:\Users\mingz\Desktop\Git\ListBoxSample" t="IncludeRecursive">
+      <e p="App.config" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Form1.cs" t="Include" />
+      <e p="Form1.Designer.cs" t="Include" />
+      <e p="Form1.resx" t="Include" />
+      <e p="ListBoxSample.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+        <e p="Resources.Designer.cs" t="Include" />
+        <e p="Resources.resx" t="Include" />
+        <e p="Settings.Designer.cs" t="Include" />
+        <e p="Settings.settings" t="Include" />
+      </e>
+    </e>
+    <e p="C:\Users\mingz\Desktop\Git\TextReader" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.0" t="Include">
+            <e p="TextReader.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Program.cs" t="Include" />
+      <e p="TextReader.csproj" t="IncludeRecursive" />
+    </e>
+    <e p="D:\VisualStudioProjects\ThreadConsole\ThreadConsole.csproj" t="IncludeRecursive" />
+  </component>
+</project>

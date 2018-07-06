@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RIDER_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../../../JDivider" />
+    <content url="file://$MODULE_DIR$/../../../ListBoxSample" />
+    <content url="file://$MODULE_DIR$/../../../TextReader" />
+    <content url="file://$MODULE_DIR$/../.." />
+    <content url="file://D:/VisualStudioProjects/ThreadConsole/ThreadConsole.csproj" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="83b611f1-49a2-4016-a578-1d6c5aaa83ae" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.CSVtoDatabase/.idea/contentModel.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.CSVtoDatabase/.idea/indexLayout.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.CSVtoDatabase/.idea/modules.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.CSVtoDatabase/.idea/vcs.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.CSVtoDatabase/riderModule.iml" />
+      <change beforePath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/.suo" afterPath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/.suo" />
+      <change beforePath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/Server/sqlite3/storage.ide" afterPath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/Server/sqlite3/storage.ide" />
+      <change beforePath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/Server/sqlite3/storage.ide-shm" afterPath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/Server/sqlite3/storage.ide-shm" />
+      <change beforePath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/Server/sqlite3/storage.ide-wal" afterPath="$PROJECT_DIR$/.vs/CSVtoDatabase/v15/Server/sqlite3/storage.ide-wal" />
+      <change beforePath="$PROJECT_DIR$/CSVtoDatabase.csproj" afterPath="$PROJECT_DIR$/CSVtoDatabase.csproj" />
+      <change beforePath="$PROJECT_DIR$/CSVtoDatabase.sln" afterPath="$PROJECT_DIR$/CSVtoDatabase.sln" />
+      <change beforePath="$PROJECT_DIR$/DataExporter.cs" afterPath="$PROJECT_DIR$/DataExporter.cs" />
+      <change beforePath="$PROJECT_DIR$/DataImporter.cs" afterPath="$PROJECT_DIR$/DataImporter.cs" />
+      <change beforePath="$PROJECT_DIR$/Form1.Designer.cs" afterPath="$PROJECT_DIR$/Form1.Designer.cs" />
+      <change beforePath="$PROJECT_DIR$/Form1.cs" afterPath="$PROJECT_DIR$/Form1.cs" />
+      <change beforePath="$PROJECT_DIR$/Helper.cs" afterPath="$PROJECT_DIR$/Helper.cs" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/CSVtoDatabase.exe" afterPath="$PROJECT_DIR$/bin/Debug/CSVtoDatabase.exe" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/CSVtoDatabase.pdb" afterPath="$PROJECT_DIR$/bin/Debug/CSVtoDatabase.pdb" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/CSVtoDatabase.csproj.GenerateResource.Cache" afterPath="$PROJECT_DIR$/obj/Debug/CSVtoDatabase.csproj.GenerateResource.Cache" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/CSVtoDatabase.exe" afterPath="$PROJECT_DIR$/obj/Debug/CSVtoDatabase.exe" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/CSVtoDatabase.pdb" afterPath="$PROJECT_DIR$/obj/Debug/CSVtoDatabase.pdb" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/DesignTimeResolveAssemblyReferences.cache" afterPath="$PROJECT_DIR$/obj/Debug/DesignTimeResolveAssemblyReferences.cache" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" afterPath="$PROJECT_DIR$/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="Form1.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Form1.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="24" column="33" lean-forward="true" selection-start-line="24" selection-start-column="33" selection-end-line="24" selection-end-column="33" />
+              <folding>
+                <marker date="1529625053119" expanded="false" signature="6:362" ph="..." />
+                <marker date="1529625053119" expanded="true" signature="387:25076" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="427:25074" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="442:626" ph="/* private string connString = &quot;&quot;; ... */" />
+                <marker date="1529625053119" expanded="true" signature="1288:1388" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="1397:1486" ph="///  &quot;abcde&quot; ... " />
+                <marker date="1529625053119" expanded="true" signature="1541:2051" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="1876:2016" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="2111:2456" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="2296:2446" ph="/* setDbList(); ... */" />
+                <marker date="1529625053119" expanded="true" signature="2493:2800" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="2622:2689" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="2837:3146" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="2942:3136" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="2990:3122" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="3216:3237" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="3300:4344" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="3323:3968" ph="##region" />
+                <marker date="1529625053119" expanded="true" signature="3343:3945" ph="/* String connectionString = ConfigurationManager.ConnectionStrings[&quot;DBmaster&quot;].ConnectionString; ... */" />
+                <marker date="1529625053119" expanded="true" signature="4098:4334" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="4384:4427" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="4492:6505" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="4562:4686" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="4792:5088" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="5384:6495" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="5469:5806" ph="/* connectionString = checkBoxIntegratedSecurity.Checked ... */" />
+                <marker date="1529625053119" expanded="true" signature="6054:6280" ph="/* connectionString = $&quot;server={Server};user id={UserId};Password={textBoxPwd.Text};database=mysql&quot;; ... */" />
+                <marker date="1529625053119" expanded="true" signature="6591:7010" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="6773:6941" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="7093:7114" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="7191:7242" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="7327:7682" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="7468:7626" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="7759:8155" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="7973:8145" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="8247:8268" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="8301:8374" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="8383:8489" ph="/// Get list of database name ... " />
+                <marker date="1529625053119" expanded="true" signature="8530:11295" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="8673:10299" ph="Sql Server" />
+                <marker date="1529625053119" expanded="true" signature="8743:10276" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="8959:9517" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="9122:9297" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="9337:9499" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="9539:10120" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="9715:9890" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="9930:10102" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="10172:10262" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="10313:11260" ph="MySql" />
+                <marker date="1529625053119" expanded="true" signature="10344:11237" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="10378:10742" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="10778:10910" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="10962:11223" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="11304:11432" ph="/// Get list of database name in specified database ... " />
+                <marker date="1529625053119" expanded="true" signature="11473:13093" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="11584:11626" ph="/* Sql Server ... */" />
+                <marker date="1529625053119" expanded="true" signature="11714:12351" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="11879:11904" ph="/* try ... */" />
+                <marker date="1529625053119" expanded="true" signature="12087:12236" ph="/* } ... */" />
+                <marker date="1529625053119" expanded="true" signature="12364:12401" ph="/* Mysql ... */" />
+                <marker date="1529625053119" expanded="true" signature="12458:13058" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="12626:12772" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="12808:12943" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="13102:13229" ph="///  ... " />
+                <marker date="1529625053119" expanded="true" signature="13287:13603" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="13348:13568" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="13679:14213" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="14222:14380" ph="/// Event occurs when form closing ... " />
+                <marker date="1529625053119" expanded="true" signature="14458:15052" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="14927:15042" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="15061:15207" ph="/// get the  boolean value that indicates whether the form is closing ... " />
+                <marker date="1529625053119" expanded="true" signature="15245:15298" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="15307:15425" ph="/// Get &lt;value&gt;textBoxLog&lt;/value&gt; control ... " />
+                <marker date="1529625053119" expanded="true" signature="15464:15515" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="15604:15698" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="15787:15836" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="15845:15973" ph="///  ... " />
+                <marker date="1529625053119" expanded="true" signature="16058:16078" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="16087:16255" ph="/// Disable the checkbox indicates whether the first line contains column names. ... " />
+                <marker date="1529625053119" expanded="true" signature="16303:16460" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="16537:16754" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="16560:16717" ph="/* if (!loaded) ... */" />
+                <marker date="1529625053119" expanded="true" signature="16831:16878" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="16887:16979" ph="///  Whether to disable checkBoxIgnoreFirstLine ... " />
+                <marker date="1529625053119" expanded="true" signature="17006:17222" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="17231:17351" ph="/// Enable &lt;remarks&gt;ddd&lt;/remarks&gt; ... " />
+                <marker date="1529625053119" expanded="true" signature="17416:17603" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="17450:17478" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="17688:18221" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="17738:17851" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="17960:18088" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="18265:18298" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="18380:18432" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="18510:18531" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="18601:19932" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="18711:18824" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="18919:19054" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="19150:19260" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="19360:19495" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="19595:19705" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20009:20135" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20201:21546" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20277:20366" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20452:20549" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20639:20736" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20841:20914" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="20979:21059" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="21076:21128" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="21416:21536" ph="/* int result = await task; ... */" />
+                <marker date="1529625053119" expanded="true" signature="21590:21611" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="21650:21922" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="21688:21912" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="21962:22234" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="22000:22224" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="22376:22397" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="22476:22497" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="22578:23104" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="22756:22840" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="23181:23202" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="23281:23302" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="23366:23865" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="23450:23578" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="23652:23780" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="23935:24035" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="24098:24119" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="24150:24183" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="24745:25068" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="24771:25058" ph="{...}" />
+                <marker date="1529625053119" expanded="true" signature="24840:25044" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Form1.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="398" />
+    <option name="y" value="194" />
+    <option name="width" value="1400" />
+    <option name="height" value="1000" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="SolutionExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="CSVtoDatabase (5 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="CSVtoDatabase (5 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="CSVtoDatabase" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="CSVtoDatabase (5 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="CSVtoDatabase" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Form1.cs" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="CSVtoDatabase (5 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="CSVtoDatabase" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Form1.cs" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Form1.resx" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-file-system" value="false" />
+        <option name="show-all-items" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Default" type="DotNetProject" factoryName=".NET Project">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/bin/Debug/CSVtoDatabase.exe" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/bin/Debug" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <envs />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/CSVtoDatabase.csproj" />
+      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
+      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
+      <option name="PROJECT_KIND" value="Console" />
+      <option name="PROJECT_TFM" value=".NETFramework,Version=v4.6.1" />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="83b611f1-49a2-4016-a578-1d6c5aaa83ae" name="Default" comment="" />
+      <created>1529940963326</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1529940963326</updated>
+      <workItem from="1529940971392" duration="358000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="358000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="398" y="194" width="1400" height="1000" extended-state="0" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Unit Tests" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35300794" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/CSVtoDatabase.csproj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="45" column="32" lean-forward="true" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Form1.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="24" column="33" lean-forward="true" selection-start-line="24" selection-start-column="33" selection-end-line="24" selection-end-column="33" />
+          <folding>
+            <marker date="1529625053119" expanded="false" signature="6:362" ph="..." />
+            <marker date="1529625053119" expanded="true" signature="387:25076" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="427:25074" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="442:626" ph="/* private string connString = &quot;&quot;; ... */" />
+            <marker date="1529625053119" expanded="true" signature="1288:1388" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="1397:1486" ph="///  &quot;abcde&quot; ... " />
+            <marker date="1529625053119" expanded="true" signature="1541:2051" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="1876:2016" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="2111:2456" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="2296:2446" ph="/* setDbList(); ... */" />
+            <marker date="1529625053119" expanded="true" signature="2493:2800" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="2622:2689" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="2837:3146" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="2942:3136" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="2990:3122" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="3216:3237" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="3300:4344" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="3323:3968" ph="##region" />
+            <marker date="1529625053119" expanded="true" signature="3343:3945" ph="/* String connectionString = ConfigurationManager.ConnectionStrings[&quot;DBmaster&quot;].ConnectionString; ... */" />
+            <marker date="1529625053119" expanded="true" signature="4098:4334" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="4384:4427" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="4492:6505" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="4562:4686" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="4792:5088" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="5384:6495" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="5469:5806" ph="/* connectionString = checkBoxIntegratedSecurity.Checked ... */" />
+            <marker date="1529625053119" expanded="true" signature="6054:6280" ph="/* connectionString = $&quot;server={Server};user id={UserId};Password={textBoxPwd.Text};database=mysql&quot;; ... */" />
+            <marker date="1529625053119" expanded="true" signature="6591:7010" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="6773:6941" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="7093:7114" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="7191:7242" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="7327:7682" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="7468:7626" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="7759:8155" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="7973:8145" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="8247:8268" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="8301:8374" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="8383:8489" ph="/// Get list of database name ... " />
+            <marker date="1529625053119" expanded="true" signature="8530:11295" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="8673:10299" ph="Sql Server" />
+            <marker date="1529625053119" expanded="true" signature="8743:10276" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="8959:9517" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="9122:9297" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="9337:9499" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="9539:10120" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="9715:9890" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="9930:10102" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="10172:10262" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="10313:11260" ph="MySql" />
+            <marker date="1529625053119" expanded="true" signature="10344:11237" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="10378:10742" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="10778:10910" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="10962:11223" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="11304:11432" ph="/// Get list of database name in specified database ... " />
+            <marker date="1529625053119" expanded="true" signature="11473:13093" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="11584:11626" ph="/* Sql Server ... */" />
+            <marker date="1529625053119" expanded="true" signature="11714:12351" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="11879:11904" ph="/* try ... */" />
+            <marker date="1529625053119" expanded="true" signature="12087:12236" ph="/* } ... */" />
+            <marker date="1529625053119" expanded="true" signature="12364:12401" ph="/* Mysql ... */" />
+            <marker date="1529625053119" expanded="true" signature="12458:13058" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="12626:12772" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="12808:12943" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="13102:13229" ph="///  ... " />
+            <marker date="1529625053119" expanded="true" signature="13287:13603" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="13348:13568" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="13679:14213" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="14222:14380" ph="/// Event occurs when form closing ... " />
+            <marker date="1529625053119" expanded="true" signature="14458:15052" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="14927:15042" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="15061:15207" ph="/// get the  boolean value that indicates whether the form is closing ... " />
+            <marker date="1529625053119" expanded="true" signature="15245:15298" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="15307:15425" ph="/// Get &lt;value&gt;textBoxLog&lt;/value&gt; control ... " />
+            <marker date="1529625053119" expanded="true" signature="15464:15515" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="15604:15698" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="15787:15836" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="15845:15973" ph="///  ... " />
+            <marker date="1529625053119" expanded="true" signature="16058:16078" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="16087:16255" ph="/// Disable the checkbox indicates whether the first line contains column names. ... " />
+            <marker date="1529625053119" expanded="true" signature="16303:16460" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="16537:16754" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="16560:16717" ph="/* if (!loaded) ... */" />
+            <marker date="1529625053119" expanded="true" signature="16831:16878" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="16887:16979" ph="///  Whether to disable checkBoxIgnoreFirstLine ... " />
+            <marker date="1529625053119" expanded="true" signature="17006:17222" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="17231:17351" ph="/// Enable &lt;remarks&gt;ddd&lt;/remarks&gt; ... " />
+            <marker date="1529625053119" expanded="true" signature="17416:17603" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="17450:17478" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="17688:18221" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="17738:17851" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="17960:18088" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="18265:18298" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="18380:18432" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="18510:18531" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="18601:19932" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="18711:18824" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="18919:19054" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="19150:19260" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="19360:19495" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="19595:19705" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20009:20135" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20201:21546" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20277:20366" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20452:20549" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20639:20736" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20841:20914" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="20979:21059" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="21076:21128" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="21416:21536" ph="/* int result = await task; ... */" />
+            <marker date="1529625053119" expanded="true" signature="21590:21611" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="21650:21922" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="21688:21912" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="21962:22234" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="22000:22224" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="22376:22397" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="22476:22497" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="22578:23104" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="22756:22840" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="23181:23202" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="23281:23302" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="23366:23865" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="23450:23578" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="23652:23780" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="23935:24035" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="24098:24119" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="24150:24183" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="24745:25068" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="24771:25058" ph="{...}" />
+            <marker date="1529625053119" expanded="true" signature="24840:25044" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

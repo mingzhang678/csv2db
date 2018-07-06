@@ -1,0 +1,10 @@
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\bin\Debug\Jdrawing.exe.config
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\bin\Debug\Jdrawing.exe
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\bin\Debug\Jdrawing.pdb
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.csprojResolveAssemblyReference.cache
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.Form1.resources
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.Properties.Resources.resources
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.csproj.GenerateResource.Cache
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.csproj.CoreCompileInputs.cache
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.exe
+C:\Users\mingz\Desktop\Git\csv2db\Jdrawing\obj\Debug\Jdrawing.pdb

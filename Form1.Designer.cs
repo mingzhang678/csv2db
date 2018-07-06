@@ -76,13 +76,15 @@
             // 
             // textBoxFilePath
             // 
+            this.textBoxFilePath.AllowDrop = true;
             this.textBoxFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxFilePath.Location = new System.Drawing.Point(12, 66);
             this.textBoxFilePath.Name = "textBoxFilePath";
             this.textBoxFilePath.Size = new System.Drawing.Size(522, 27);
             this.textBoxFilePath.TabIndex = 0;
-            this.textBoxFilePath.Text = "C:\\Users\\lrz\\Desktop\\FTP\\IP2LOCATION-LITE-DB11-3345.CSV";
             this.textBoxFilePath.TextChanged += new System.EventHandler(this.textBoxFilePath_TextChanged);
+            this.textBoxFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxFilePath_DragDrop);
+            this.textBoxFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxFilePath_DragEnter);
             // 
             // textBoxLog
             // 
@@ -187,7 +189,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1212, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(1202, 27);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -326,7 +328,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1082, 35);
+            this.button1.Location = new System.Drawing.Point(1039, 66);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 17;
@@ -345,7 +347,7 @@
             this.toolStripStatusLabel2});
             this.statusStrip1.Location = new System.Drawing.Point(0, 823);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1212, 31);
+            this.statusStrip1.Size = new System.Drawing.Size(1202, 31);
             this.statusStrip1.TabIndex = 19;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -488,7 +490,7 @@
             // btnStopExport
             // 
             this.btnStopExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStopExport.Location = new System.Drawing.Point(1000, 231);
+            this.btnStopExport.Location = new System.Drawing.Point(993, 230);
             this.btnStopExport.Name = "btnStopExport";
             this.btnStopExport.Size = new System.Drawing.Size(80, 31);
             this.btnStopExport.TabIndex = 30;
@@ -498,10 +500,10 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(106F, 106F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.DarkCyan;
-            this.ClientSize = new System.Drawing.Size(1212, 854);
+            this.ClientSize = new System.Drawing.Size(1202, 854);
             this.Controls.Add(this.btnStopExport);
             this.Controls.Add(this.btnPauseExport);
             this.Controls.Add(this.btnExport);

@@ -15,11 +15,11 @@ namespace CSVtoDatabase
     public class DataExporter
     {
         private readonly Form1 MainForm = Program.GetMainForm();
-        private SqlConnection ThisSqlConnection;
-        private MySqlConnection ThisMySqlConnection;
-        public Thread ThisThread;
-        private FileStream ThisFileStream;
-        private StreamWriter ThisStreamWriter;
+        private SqlConnection _sqlConnection;
+        private MySqlConnection _mySqlConnection;
+        public Thread _thread;
+        private FileStream _fileStream;
+        private StreamWriter _streamWriter;
 
         public DataExporter()
         {
@@ -31,11 +31,11 @@ namespace CSVtoDatabase
         /// <param name="connection"></param>
         public DataExporter(SqlConnection connection)
         {
-            ThisSqlConnection = connection;
+            _sqlConnection = connection;
         }
         public DataExporter(MySqlConnection connection)
         {
-            ThisMySqlConnection = connection;
+            _mySqlConnection = connection;
         }
         public int ExportToCsv(string dbname, string dtname, DataSource source, string filepath)
         {
@@ -72,8 +72,8 @@ namespace CSVtoDatabase
             table = GetDataTable(queryString, source);
             if (File.Exists(filepath))
                 File.Delete(filepath);
-            ThisFileStream = new FileStream(filepath, FileMode.Create);
-            ThisStreamWriter = new StreamWriter(ThisFileStream);
+            _fileStream = new FileStream(filepath, FileMode.Create);
+            _streamWriter = new StreamWriter(_fileStream);
             string lineString = "";
             for (int i = 0; i < columnNames.Count; i++)
             {
@@ -89,7 +89,7 @@ namespace CSVtoDatabase
 
             MainForm.textBoxLog.AppendText($"Start export.\r\n");
             int success = -1;
-            success = WriteToCsv(table, fieldCount, recordCount, ThisStreamWriter);
+            success = WriteToCsv(table, fieldCount, recordCount, _streamWriter);
             return exportedCount;
         }
 
@@ -137,8 +137,8 @@ namespace CSVtoDatabase
             table = GetDataTable(queryString, connectionString, source);
             if (File.Exists(filepath))
                 File.Delete(filepath);
-            ThisFileStream = new FileStream(filepath, FileMode.Create);
-            ThisStreamWriter = new StreamWriter(ThisFileStream);
+            _fileStream = new FileStream(filepath, FileMode.Create);
+            _streamWriter = new StreamWriter(_fileStream);
             string lineString = "";
             for (int i = 0; i < columnNames.Count; i++)
             {
@@ -154,16 +154,16 @@ namespace CSVtoDatabase
 
             MainForm.textBoxLog.AppendText($"Start export.\r\n");
             int success = -1;
-            success = WriteToCsv(table, fieldCount, recordCount, ThisStreamWriter);
+            success = WriteToCsv(table, fieldCount, recordCount, _streamWriter);
             return exportedCount;
         }
         public int WriteToCsv(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
         {
-            ThisThread = new Thread(() => WriteRecordsThread(table, fieldCount, recordCount, writer))
+            _thread = new Thread(() => WriteRecordsThread(table, fieldCount, recordCount, writer))
             {
                 IsBackground = false
             };
-            ThisThread.Start();
+            _thread.Start();
             return 0;
         }
         /// <summary>
@@ -186,6 +186,14 @@ namespace CSVtoDatabase
         private delegate void SetProgressBarValueDelegate(int value);
 
         internal delegate void AppendTextBoxTextDeleget(string text);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="fieldCount"></param>
+        /// <param name="recordCount"></param>
+        /// <param name="writer"></param>
+        /// <returns></returns>
         private int WriteRecordsThread(DataTable table, int fieldCount, int recordCount, StreamWriter writer)
         {
             int exportedCount = 0;
@@ -221,10 +229,10 @@ namespace CSVtoDatabase
         /// </summary>
         internal void Dispose()
         {
-            ThisStreamWriter?.Dispose();
-            ThisFileStream?.Dispose();
+            _streamWriter?.Dispose();
+            _fileStream?.Dispose();
             //if (thread.IsAlive)
-            ThisThread?.Abort();
+            _thread?.Abort();
         }
         /// <summary>
         /// 
@@ -239,12 +247,12 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                        table = new Helper(_sqlConnection).QuerySqlServer(queryString);
                     }
                     break;
                 case DataSource.MySql:
                     {
-                        table = new Helper(ThisMySqlConnection).QueryMySql(queryString);
+                        table = new Helper(_mySqlConnection).QueryMySql(queryString);
                     }
                     break;
             }
@@ -258,12 +266,12 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        table = new Helper(ThisSqlConnection).QuerySqlServer(queryString);
+                        table = new Helper(_sqlConnection).QuerySqlServer(queryString);
                     }
                     break;
                 case DataSource.MySql:
                     {
-                        table = new Helper(ThisMySqlConnection).QueryMySql(queryString);
+                        table = new Helper(_mySqlConnection).QueryMySql(queryString);
                     }
                     break;
             }
@@ -287,16 +295,18 @@ namespace CSVtoDatabase
                 case DataSource.SqlServer:
                     {
 
-                        queryString = $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
+                        //queryString = $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
+                        queryString =
+                            $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`=\'{dbname}\' AND `TABLE_NAME`=\'{dtname}\';";
                         //try
                         //{
-                        if (ThisSqlConnection.State == ConnectionState.Closed)
-                            ThisSqlConnection.Open();
+                        if (_sqlConnection.State == ConnectionState.Closed)
+                            _sqlConnection.Open();
                         //}
                         //catch (Exception e)
                         //{
                         //}
-                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                        SqlCommand command = new SqlCommand(queryString, _sqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         adapter.Fill(table);
                         command.Dispose();
@@ -306,9 +316,9 @@ namespace CSVtoDatabase
                 case DataSource.MySql:
                     {
                         queryString = $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
-                        if (ThisMySqlConnection.State == ConnectionState.Closed)
-                            ThisMySqlConnection.Open();
-                        MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
+                        if (_mySqlConnection.State == ConnectionState.Closed)
+                            _mySqlConnection.Open();
+                        MySqlCommand command = new MySqlCommand(queryString, _mySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                         adapter.Fill(table);
                         command.Dispose();
@@ -336,15 +346,15 @@ namespace CSVtoDatabase
 
                         queryString =
                             $"SELECT COLUMN_NAME FROM {dbname}.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{dtname}'";
-                        ThisSqlConnection = new SqlConnection(connectionString);
+                        _sqlConnection = new SqlConnection(connectionString);
                         //try
                         //{
-                        ThisSqlConnection.Open();
+                        _sqlConnection.Open();
                         //}
                         //catch (Exception e)
                         //{
                         //}
-                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                        SqlCommand command = new SqlCommand(queryString, _sqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         adapter.Fill(table);
                         command.Dispose();
@@ -356,9 +366,9 @@ namespace CSVtoDatabase
                     {
                         queryString =
                             $"USE {dbname};SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dtname}'";
-                        ThisMySqlConnection = new MySqlConnection(connectionString);
-                        ThisMySqlConnection.Open();
-                        MySqlCommand command = new MySqlCommand(queryString, ThisMySqlConnection);
+                        _mySqlConnection = new MySqlConnection(connectionString);
+                        _mySqlConnection.Open();
+                        MySqlCommand command = new MySqlCommand(queryString, _mySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                         adapter.Fill(table);
                         command.Dispose();
@@ -380,9 +390,9 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        if (ThisSqlConnection.State == ConnectionState.Closed)
-                            ThisSqlConnection.Open();
-                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                        if (_sqlConnection.State == ConnectionState.Closed)
+                            _sqlConnection.Open();
+                        SqlCommand command = new SqlCommand(queryString, _sqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable table = new DataTable();
                         adapter.Fill(table);
@@ -391,9 +401,9 @@ namespace CSVtoDatabase
                     break;
                 case DataSource.MySql:
                     {
-                        if (ThisMySqlConnection.State == ConnectionState.Closed)
-                            ThisMySqlConnection.Open();
-                        MySqlCommand commmand = new MySqlCommand(queryString, ThisMySqlConnection);
+                        if (_mySqlConnection.State == ConnectionState.Closed)
+                            _mySqlConnection.Open();
+                        MySqlCommand commmand = new MySqlCommand(queryString, _mySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(commmand);
                         DataTable table = new DataTable();
                         adapter.Fill(table);
@@ -420,9 +430,9 @@ namespace CSVtoDatabase
             {
                 case DataSource.SqlServer:
                     {
-                        ThisSqlConnection = new SqlConnection(connectionString);
-                        ThisSqlConnection.Open();
-                        SqlCommand command = new SqlCommand(queryString, ThisSqlConnection);
+                        _sqlConnection = new SqlConnection(connectionString);
+                        _sqlConnection.Open();
+                        SqlCommand command = new SqlCommand(queryString, _sqlConnection);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable table = new DataTable();
                         adapter.Fill(table);
@@ -431,9 +441,9 @@ namespace CSVtoDatabase
                     break;
                 case DataSource.MySql:
                     {
-                        ThisMySqlConnection = new MySqlConnection(connectionString);
-                        ThisMySqlConnection.Open();
-                        MySqlCommand commmand = new MySqlCommand(queryString, ThisMySqlConnection);
+                        _mySqlConnection = new MySqlConnection(connectionString);
+                        _mySqlConnection.Open();
+                        MySqlCommand commmand = new MySqlCommand(queryString, _mySqlConnection);
                         MySqlDataAdapter adapter = new MySqlDataAdapter(commmand);
                         DataTable table = new DataTable();
                         adapter.Fill(table);
@@ -444,18 +454,29 @@ namespace CSVtoDatabase
             return Convert.ToInt32(count);
         }
 
-        public void Suspend() => ThisThread?.Suspend();
+        public void Suspend()
+        {
+            if (_thread != null)
+            {
+                if(_thread.ThreadState==ThreadState.Running)
+                    _thread.Suspend();
+            }
+        }
 
         public void Resume()
         {
-            ThisThread.Resume();
+            if (_thread != null)
+            {
+                if(_thread.ThreadState==ThreadState.Suspended)
+                _thread.Resume();
+            }
         }
         ~DataExporter()
         {
-            ThisStreamWriter?.Dispose();
-            ThisMySqlConnection?.Dispose();
-            ThisFileStream?.Dispose();
-            ThisThread?.Abort();
+            _streamWriter?.Dispose();
+            _mySqlConnection?.Dispose();
+            _fileStream?.Dispose();
+            _thread?.Abort();
         }
     }
 }
