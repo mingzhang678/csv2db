@@ -70,6 +70,8 @@
             this.btnExport = new System.Windows.Forms.Button();
             this.btnPauseExport = new System.Windows.Forms.Button();
             this.btnStopExport = new System.Windows.Forms.Button();
+            this.btnGenerateScripts = new System.Windows.Forms.Button();
+            this.btnResume = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -78,9 +80,9 @@
             // 
             this.textBoxFilePath.AllowDrop = true;
             this.textBoxFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxFilePath.Location = new System.Drawing.Point(12, 66);
+            this.textBoxFilePath.Location = new System.Drawing.Point(11, 60);
             this.textBoxFilePath.Name = "textBoxFilePath";
-            this.textBoxFilePath.Size = new System.Drawing.Size(522, 27);
+            this.textBoxFilePath.Size = new System.Drawing.Size(473, 26);
             this.textBoxFilePath.TabIndex = 0;
             this.textBoxFilePath.TextChanged += new System.EventHandler(this.textBoxFilePath_TextChanged);
             this.textBoxFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxFilePath_DragDrop);
@@ -89,21 +91,21 @@
             // textBoxLog
             // 
             this.textBoxLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxLog.Location = new System.Drawing.Point(0, 264);
+            this.textBoxLog.Location = new System.Drawing.Point(0, 239);
             this.textBoxLog.Multiline = true;
             this.textBoxLog.Name = "textBoxLog";
             this.textBoxLog.ReadOnly = true;
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxLog.Size = new System.Drawing.Size(1200, 564);
+            this.textBoxLog.Size = new System.Drawing.Size(1087, 511);
             this.textBoxLog.TabIndex = 1;
             this.textBoxLog.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // btnChooseFile
             // 
             this.btnChooseFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnChooseFile.Location = new System.Drawing.Point(554, 66);
+            this.btnChooseFile.Location = new System.Drawing.Point(502, 60);
             this.btnChooseFile.Name = "btnChooseFile";
-            this.btnChooseFile.Size = new System.Drawing.Size(83, 26);
+            this.btnChooseFile.Size = new System.Drawing.Size(75, 24);
             this.btnChooseFile.TabIndex = 2;
             this.btnChooseFile.Text = "Choose file";
             this.btnChooseFile.UseVisualStyleBackColor = true;
@@ -114,18 +116,18 @@
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label1.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(8, 32);
+            this.label1.Location = new System.Drawing.Point(7, 29);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 24);
+            this.label1.Size = new System.Drawing.Size(69, 21);
             this.label1.TabIndex = 3;
             this.label1.Text = "CSV file";
             // 
             // btnImport
             // 
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnImport.Location = new System.Drawing.Point(625, 196);
+            this.btnImport.Location = new System.Drawing.Point(566, 178);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(205, 32);
+            this.btnImport.Size = new System.Drawing.Size(186, 29);
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import from File";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -135,13 +137,13 @@
             // 
             this.listBoxDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBoxDatabase.FormattingEnabled = true;
-            this.listBoxDatabase.ItemHeight = 17;
+            this.listBoxDatabase.ItemHeight = 16;
             this.listBoxDatabase.Items.AddRange(new object[] {
             "SQL Server",
             "MySQL"});
-            this.listBoxDatabase.Location = new System.Drawing.Point(12, 136);
+            this.listBoxDatabase.Location = new System.Drawing.Point(11, 123);
             this.listBoxDatabase.Name = "listBoxDatabase";
-            this.listBoxDatabase.Size = new System.Drawing.Size(153, 38);
+            this.listBoxDatabase.Size = new System.Drawing.Size(139, 52);
             this.listBoxDatabase.TabIndex = 5;
             this.listBoxDatabase.SelectedIndexChanged += new System.EventHandler(this.listBoxDatabase_SelectedIndexChanged);
             // 
@@ -150,9 +152,9 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label2.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 111);
+            this.label2.Location = new System.Drawing.Point(11, 101);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 24);
+            this.label2.Size = new System.Drawing.Size(62, 21);
             this.label2.TabIndex = 7;
             this.label2.Text = "Source";
             // 
@@ -161,9 +163,9 @@
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(280, 207);
+            this.label3.Location = new System.Drawing.Point(254, 187);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(127, 20);
+            this.label3.Size = new System.Drawing.Size(112, 18);
             this.label3.TabIndex = 9;
             this.label3.Text = "Database name";
             // 
@@ -172,9 +174,9 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(280, 237);
+            this.label4.Location = new System.Drawing.Point(254, 215);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(127, 20);
+            this.label4.Size = new System.Drawing.Size(111, 18);
             this.label4.TabIndex = 10;
             this.label4.Text = "Datatable name";
             this.label4.Click += new System.EventHandler(this.label4_Click);
@@ -189,7 +191,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1202, 27);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1089, 24);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -201,28 +204,28 @@
             this.saveLogToolStripMenuItem,
             this.exitXToolStripMenuItem});
             this.fileFToolStripMenuItem.Name = "fileFToolStripMenuItem";
-            this.fileFToolStripMenuItem.Size = new System.Drawing.Size(56, 23);
+            this.fileFToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.fileFToolStripMenuItem.Text = "File(&F)";
             this.fileFToolStripMenuItem.Click += new System.EventHandler(this.fileFToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.openToolStripMenuItem.Text = "Open(&O)";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveLogToolStripMenuItem
             // 
             this.saveLogToolStripMenuItem.Name = "saveLogToolStripMenuItem";
-            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.saveLogToolStripMenuItem.Text = "Save log(&S)";
             this.saveLogToolStripMenuItem.Click += new System.EventHandler(this.saveLogToolStripMenuItem_Click);
             // 
             // exitXToolStripMenuItem
             // 
             this.exitXToolStripMenuItem.Name = "exitXToolStripMenuItem";
-            this.exitXToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.exitXToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.exitXToolStripMenuItem.Text = "Exit(&X)";
             this.exitXToolStripMenuItem.Click += new System.EventHandler(this.exitXToolStripMenuItem_Click);
             // 
@@ -236,41 +239,41 @@
             this.clearLogToolStripMenuItem,
             this.preferenceToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(59, 23);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.editToolStripMenuItem.Text = "Edit(&E)";
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.copyToolStripMenuItem.Text = "Copy             Ctrl+C";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.cutToolStripMenuItem.Text = "Cut                Ctrl+X";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.pasteToolStripMenuItem.Text = "Paste             Ctrl+V";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // clearLogToolStripMenuItem
             // 
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.clearLogToolStripMenuItem.Text = "Clear log";
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
             // 
             // preferenceToolStripMenuItem
             // 
             this.preferenceToolStripMenuItem.Name = "preferenceToolStripMenuItem";
-            this.preferenceToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.preferenceToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.preferenceToolStripMenuItem.Text = "Preference";
             this.preferenceToolStripMenuItem.Visible = false;
             this.preferenceToolStripMenuItem.Click += new System.EventHandler(this.preferenceToolStripMenuItem_Click);
@@ -281,13 +284,13 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(67, 23);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.helpToolStripMenuItem.Text = "Help(&H)";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(118, 24);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -296,9 +299,9 @@
             this.checkBoxIgnoreFirstLine.AutoSize = true;
             this.checkBoxIgnoreFirstLine.BackColor = System.Drawing.Color.LightSeaGreen;
             this.checkBoxIgnoreFirstLine.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBoxIgnoreFirstLine.Location = new System.Drawing.Point(690, 69);
+            this.checkBoxIgnoreFirstLine.Location = new System.Drawing.Point(625, 62);
             this.checkBoxIgnoreFirstLine.Name = "checkBoxIgnoreFirstLine";
-            this.checkBoxIgnoreFirstLine.Size = new System.Drawing.Size(275, 24);
+            this.checkBoxIgnoreFirstLine.Size = new System.Drawing.Size(244, 22);
             this.checkBoxIgnoreFirstLine.TabIndex = 12;
             this.checkBoxIgnoreFirstLine.Text = "First line contains column names";
             this.checkBoxIgnoreFirstLine.UseVisualStyleBackColor = false;
@@ -308,9 +311,9 @@
             // 
             this.comboBoxDbList.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxDbList.FormattingEnabled = true;
-            this.comboBoxDbList.Location = new System.Drawing.Point(413, 203);
+            this.comboBoxDbList.Location = new System.Drawing.Point(374, 184);
             this.comboBoxDbList.Name = "comboBoxDbList";
-            this.comboBoxDbList.Size = new System.Drawing.Size(206, 28);
+            this.comboBoxDbList.Size = new System.Drawing.Size(187, 26);
             this.comboBoxDbList.TabIndex = 13;
             this.comboBoxDbList.SelectedIndexChanged += new System.EventHandler(this.comboBoxDbList_SelectedIndexChanged);
             this.comboBoxDbList.TextChanged += new System.EventHandler(this.comboBoxDbList_TextChanged);
@@ -319,18 +322,18 @@
             // 
             this.comboBoxDtList.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxDtList.FormattingEnabled = true;
-            this.comboBoxDtList.Location = new System.Drawing.Point(413, 233);
+            this.comboBoxDtList.Location = new System.Drawing.Point(374, 211);
             this.comboBoxDtList.Name = "comboBoxDtList";
-            this.comboBoxDtList.Size = new System.Drawing.Size(206, 28);
+            this.comboBoxDtList.Size = new System.Drawing.Size(187, 26);
             this.comboBoxDtList.TabIndex = 14;
             this.comboBoxDtList.SelectedIndexChanged += new System.EventHandler(this.comboBoxDtList_SelectedIndexChanged);
             this.comboBoxDtList.TextChanged += new System.EventHandler(this.comboBoxDtList_TextChanged);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1039, 66);
+            this.button1.Location = new System.Drawing.Point(941, 60);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(68, 21);
             this.button1.TabIndex = 17;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
@@ -345,9 +348,10 @@
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1,
             this.toolStripStatusLabel2});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 823);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 742);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1202, 31);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 13, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1089, 31);
             this.statusStrip1.TabIndex = 19;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -362,7 +366,7 @@
             // 
             this.toolStripProgressBar1.Maximum = 0;
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(930, 25);
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(842, 25);
             // 
             // toolStripStatusLabel2
             // 
@@ -374,19 +378,19 @@
             // textBoxUId
             // 
             this.textBoxUId.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxUId.Location = new System.Drawing.Point(92, 204);
+            this.textBoxUId.Location = new System.Drawing.Point(83, 185);
             this.textBoxUId.Name = "textBoxUId";
-            this.textBoxUId.Size = new System.Drawing.Size(165, 26);
+            this.textBoxUId.Size = new System.Drawing.Size(150, 24);
             this.textBoxUId.TabIndex = 20;
             this.textBoxUId.Text = "sa";
             // 
             // textBoxPwd
             // 
             this.textBoxPwd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPwd.Location = new System.Drawing.Point(92, 234);
+            this.textBoxPwd.Location = new System.Drawing.Point(83, 212);
             this.textBoxPwd.Name = "textBoxPwd";
             this.textBoxPwd.PasswordChar = '*';
-            this.textBoxPwd.Size = new System.Drawing.Size(165, 26);
+            this.textBoxPwd.Size = new System.Drawing.Size(150, 24);
             this.textBoxPwd.TabIndex = 21;
             this.textBoxPwd.Text = "000000";
             // 
@@ -395,9 +399,9 @@
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(0, 207);
+            this.label5.Location = new System.Drawing.Point(0, 187);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 20);
+            this.label5.Size = new System.Drawing.Size(77, 18);
             this.label5.TabIndex = 22;
             this.label5.Text = "Username";
             // 
@@ -406,9 +410,9 @@
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(0, 235);
+            this.label6.Location = new System.Drawing.Point(0, 213);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(83, 20);
+            this.label6.Size = new System.Drawing.Size(75, 18);
             this.label6.TabIndex = 22;
             this.label6.Text = "Password";
             // 
@@ -417,9 +421,9 @@
             this.checkBoxIntegratedSecurity.AutoSize = true;
             this.checkBoxIntegratedSecurity.BackColor = System.Drawing.Color.Aquamarine;
             this.checkBoxIntegratedSecurity.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBoxIntegratedSecurity.Location = new System.Drawing.Point(190, 168);
+            this.checkBoxIntegratedSecurity.Location = new System.Drawing.Point(172, 152);
             this.checkBoxIntegratedSecurity.Name = "checkBoxIntegratedSecurity";
-            this.checkBoxIntegratedSecurity.Size = new System.Drawing.Size(295, 24);
+            this.checkBoxIntegratedSecurity.Size = new System.Drawing.Size(258, 22);
             this.checkBoxIntegratedSecurity.TabIndex = 23;
             this.checkBoxIntegratedSecurity.Text = "Integrated security(Sql Server Only)";
             this.checkBoxIntegratedSecurity.UseVisualStyleBackColor = false;
@@ -427,9 +431,9 @@
             // btnCheckConnection
             // 
             this.btnCheckConnection.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCheckConnection.Location = new System.Drawing.Point(598, 118);
+            this.btnCheckConnection.Location = new System.Drawing.Point(542, 107);
             this.btnCheckConnection.Name = "btnCheckConnection";
-            this.btnCheckConnection.Size = new System.Drawing.Size(104, 35);
+            this.btnCheckConnection.Size = new System.Drawing.Size(94, 32);
             this.btnCheckConnection.TabIndex = 24;
             this.btnCheckConnection.Text = "Connect";
             this.btnCheckConnection.UseVisualStyleBackColor = true;
@@ -438,9 +442,9 @@
             // textBoxServer
             // 
             this.textBoxServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxServer.Location = new System.Drawing.Point(190, 136);
+            this.textBoxServer.Location = new System.Drawing.Point(172, 123);
             this.textBoxServer.Name = "textBoxServer";
-            this.textBoxServer.Size = new System.Drawing.Size(294, 26);
+            this.textBoxServer.Size = new System.Drawing.Size(267, 24);
             this.textBoxServer.TabIndex = 25;
             this.textBoxServer.Text = "localhost";
             // 
@@ -448,18 +452,18 @@
             // 
             this.label7.BackColor = System.Drawing.Color.LightSeaGreen;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(190, 111);
+            this.label7.Location = new System.Drawing.Point(172, 101);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(134, 21);
+            this.label7.Size = new System.Drawing.Size(121, 19);
             this.label7.TabIndex = 26;
             this.label7.Text = "Server address";
             // 
             // btnDisconnect
             // 
             this.btnDisconnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisconnect.Location = new System.Drawing.Point(598, 156);
+            this.btnDisconnect.Location = new System.Drawing.Point(542, 141);
             this.btnDisconnect.Name = "btnDisconnect";
-            this.btnDisconnect.Size = new System.Drawing.Size(104, 34);
+            this.btnDisconnect.Size = new System.Drawing.Size(94, 31);
             this.btnDisconnect.TabIndex = 27;
             this.btnDisconnect.Text = "Disconnect";
             this.btnDisconnect.UseVisualStyleBackColor = true;
@@ -468,9 +472,9 @@
             // btnExport
             // 
             this.btnExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExport.Location = new System.Drawing.Point(625, 230);
+            this.btnExport.Location = new System.Drawing.Point(566, 208);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(205, 31);
+            this.btnExport.Size = new System.Drawing.Size(186, 28);
             this.btnExport.TabIndex = 28;
             this.btnExport.Text = "Export to File";
             this.btnExport.UseVisualStyleBackColor = true;
@@ -479,9 +483,9 @@
             // btnPauseExport
             // 
             this.btnPauseExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPauseExport.Location = new System.Drawing.Point(878, 231);
+            this.btnPauseExport.Location = new System.Drawing.Point(795, 209);
             this.btnPauseExport.Name = "btnPauseExport";
-            this.btnPauseExport.Size = new System.Drawing.Size(87, 31);
+            this.btnPauseExport.Size = new System.Drawing.Size(79, 28);
             this.btnPauseExport.TabIndex = 29;
             this.btnPauseExport.Text = "Pause";
             this.btnPauseExport.UseVisualStyleBackColor = true;
@@ -490,20 +494,43 @@
             // btnStopExport
             // 
             this.btnStopExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStopExport.Location = new System.Drawing.Point(993, 230);
+            this.btnStopExport.Location = new System.Drawing.Point(880, 209);
             this.btnStopExport.Name = "btnStopExport";
-            this.btnStopExport.Size = new System.Drawing.Size(80, 31);
+            this.btnStopExport.Size = new System.Drawing.Size(72, 28);
             this.btnStopExport.TabIndex = 30;
             this.btnStopExport.Text = "Stop";
             this.btnStopExport.UseVisualStyleBackColor = true;
             this.btnStopExport.Click += new System.EventHandler(this.btnStopExport_Click);
             // 
+            // btnGenerateScripts
+            // 
+            this.btnGenerateScripts.Location = new System.Drawing.Point(762, 107);
+            this.btnGenerateScripts.Name = "btnGenerateScripts";
+            this.btnGenerateScripts.Size = new System.Drawing.Size(95, 40);
+            this.btnGenerateScripts.TabIndex = 31;
+            this.btnGenerateScripts.Text = "Generate scripts";
+            this.btnGenerateScripts.UseVisualStyleBackColor = true;
+            this.btnGenerateScripts.Click += new System.EventHandler(this.btnGenerateScripts_Click);
+            // 
+            // btnResume
+            // 
+            this.btnResume.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnResume.Location = new System.Drawing.Point(958, 209);
+            this.btnResume.Name = "btnResume";
+            this.btnResume.Size = new System.Drawing.Size(72, 28);
+            this.btnResume.TabIndex = 30;
+            this.btnResume.Text = "Stop";
+            this.btnResume.UseVisualStyleBackColor = true;
+            this.btnResume.Click += new System.EventHandler(this.btnStopExport_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(106F, 106F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.DarkCyan;
-            this.ClientSize = new System.Drawing.Size(1202, 854);
+            this.ClientSize = new System.Drawing.Size(1089, 773);
+            this.Controls.Add(this.btnGenerateScripts);
+            this.Controls.Add(this.btnResume);
             this.Controls.Add(this.btnStopExport);
             this.Controls.Add(this.btnPauseExport);
             this.Controls.Add(this.btnExport);
@@ -590,6 +617,8 @@
         private System.Windows.Forms.ToolStripMenuItem saveLogToolStripMenuItem;
         private System.Windows.Forms.Button btnPauseExport;
         private System.Windows.Forms.Button btnStopExport;
+        private System.Windows.Forms.Button btnGenerateScripts;
+        private System.Windows.Forms.Button btnResume;
     }
 }
 

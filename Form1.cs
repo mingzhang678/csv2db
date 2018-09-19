@@ -648,21 +648,22 @@ namespace CSVtoDatabase
             if (_dataExporter._thread != null && _dataExporter._thread.ThreadState == ThreadState.Running)
             {
                 _dataExporter._thread.Suspend();
-                btnPauseExport.Text = @"Paused.
-";
+                textBoxLog.AppendText("Paused.\r\n");
             }
             if (_dataImporter._thread != null && _dataImporter._thread.ThreadState == ThreadState.Running)
             {
                 _dataExporter._thread.Suspend();
-                btnPauseExport.Text = @"Paused.
-";
+                textBoxLog.AppendText("Paused.\r\n");
             }
-            MessageBox.Show(_dataExporter._thread.ThreadState.ToString());
+            //MessageBox.Show(_dataExporter._thread.ThreadState.ToString());
         }
 
         private void btnStopExport_Click(object sender, EventArgs e)
         {
-            _dataExporter._thread.Abort();
+            if(_dataExporter!=null)
+                if(_dataExporter._thread!=null)
+                    if(_dataExporter._thread.ThreadState != ThreadState.Stopped)
+                        _dataExporter._thread.Abort();
             _dataExporter.Dispose();
         }
 
@@ -720,6 +721,11 @@ namespace CSVtoDatabase
         {
             string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
             textBoxFilePath.Text = files[0];
+        }
+
+        private void btnGenerateScripts_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }

@@ -37,6 +37,62 @@ namespace CSVtoDatabase
         {
             _mySqlConnection = connection;
         }
+        public int GenerateScripts(string dbname, string dtname, DataSource source, string filepath)
+        {
+            MainForm.textBoxLog.AppendText($"Exporting to {filepath}...\r\n");
+            // Total count of records
+            int recordCount = GetRecordCount(dbname, dtname, source);
+            // Count of records exported
+            int exportedCount = 0;
+            MainForm.toolStripStatusLabel1.Text = $@"Export progxress: {exportedCount}/{recordCount}";
+            // Names of columns
+            List<string> columnNames = GetColumnNames(dbname, dtname, source);
+            // Set progressbar max value to recordCount
+            MainForm.toolStripProgressBar1.Maximum = recordCount;
+            DataTable table;
+            string queryString = "";
+            // Datasource
+            switch (source)
+            {
+                // Sql Server
+                case DataSource.SqlServer:
+                    {
+                        queryString = $"select * from {dbname}.dbo.{dtname}";
+                    }
+                    break;
+                // MySql
+                case DataSource.MySql:
+                    {
+                        queryString = $"use {dbname};select * from {dtname};";
+                    }
+                    break;
+            }
+            // the quantity of field
+            int fieldCount = columnNames.Count;
+            table = GetDataTable(queryString, source);
+            if (File.Exists(filepath))
+                File.Delete(filepath);
+            _fileStream = new FileStream(filepath, FileMode.Create);
+            _streamWriter = new StreamWriter(_fileStream);
+            string lineString = "";
+            for (int i = 0; i < columnNames.Count; i++)
+            {
+                if (i == columnNames.Count - 1)
+                {
+                    lineString += $"\"{columnNames[i]}\"";
+                }
+                else
+                {
+                    lineString += $"\"{columnNames[i]}\",";
+                }
+            }
+
+            MainForm.textBoxLog.AppendText($"Start export.\r\n");
+            int success = -1;
+            success = WriteToCsv(table, fieldCount, recordCount, _streamWriter);
+            return exportedCount;
+        }
+
         public int ExportToCsv(string dbname, string dtname, DataSource source, string filepath)
         {
             MainForm.textBoxLog.AppendText($"Exporting to {filepath}...\r\n");
