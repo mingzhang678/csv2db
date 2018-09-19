@@ -9,7 +9,7 @@ namespace CSVtoDatabase
 
     public class OperateControls
     {
-        private static Form1 mainForm = Program.GetMainForm();
+        private static MainForm mainForm = Program.GetMainForm();
         /// <summary>
         /// 
         /// </summary>

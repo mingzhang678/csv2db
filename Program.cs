@@ -8,7 +8,7 @@ namespace CSVtoDatabase
 {
     static class Program
     {
-        private static Form1 form1;
+        private static MainForm form1;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,10 +17,10 @@ namespace CSVtoDatabase
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            form1 = new Form1();
+            form1 = new MainForm();
             Application.Run(form1);
         }
-        public static Form1 GetMainForm()
+        public static MainForm GetMainForm()
         {
             return form1;
         }
