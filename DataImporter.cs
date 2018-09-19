@@ -14,7 +14,7 @@ namespace CSVtoDatabase
 {
     public class DataImporter
     {
-        private static readonly Form1 mainForm = Program.GetMainForm();
+        private static readonly MainForm mainForm = Program.GetMainForm();
         public Thread _thread { get; set; }
         private MySqlConnection _mySqlConnection { get; set; }
         private SqlConnection _sqlConnection { get; set; }
