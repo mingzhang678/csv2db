@@ -14,7 +14,7 @@ namespace CSVtoDatabase
 {
     public class DataExporter
     {
-        private readonly Form1 MainForm = Program.GetMainForm();
+        private readonly MainForm MainForm = Program.GetMainForm();
         private SqlConnection _sqlConnection;
         private MySqlConnection _mySqlConnection;
         public Thread _thread;
