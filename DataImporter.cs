@@ -247,10 +247,9 @@ namespace CSVtoDatabase
                         //writer.WriteLine(insertCommandString);
                         string createDbCommandString = $"IF(DB_ID('{dbname}') IS NULL) CREATE DATABASE [{dbname}];";
                         string createDtCommandString = $"USE {dbname}; IF NOT EXISTS(SELECT [NAME] FROM SYS.TABLES WHERE [NAME] = '{dtname}') CREATE TABLE [{dtname}]({fields});";
-
-                        
                         SqlCommand createDbCommand = new SqlCommand(createDbCommandString, _sqlConnection);
                         SqlCommand createDtCommand = new SqlCommand(createDtCommandString, _sqlConnection);
+                        
                         //createDbCommand.ExecuteNonQuery();
                         //createDtCommand.ExecuteNonQuery();
                         createDtCommand.Dispose();
@@ -332,7 +331,8 @@ namespace CSVtoDatabase
                     }
                     catch (Exception e)
                     {
-                        throw new Exception(e.Message);
+                        if(_thread.IsAlive)
+                            throw new Exception(e.Message);
                         mainForm.textBoxLog.Invoke(
                             new OperateControls.appendTextBoxTextDelegate(OperateControls.AppendTextBoxText),
                             $"\nExecute \"{insertCommandString}\" failed.\n" + $"{e.Message} \n");
